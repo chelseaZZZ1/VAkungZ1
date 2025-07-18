@@ -136,7 +136,9 @@
         /* เพิ่ม class สำหรับ neon glow ที่ควบคุมด้วย JS */
         .header.neon-active,
         .game-selection.neon-active,
-        .product-card.neon-active {
+        .product-card.neon-active,
+        .cart-modal-content.neon-active, /* เพิ่มสำหรับ cart modal */
+        .checkout-modal-content.neon-active { /* เพิ่มสำหรับ checkout modal */
             box-shadow: var(--neon-glow-secondary); /* ใช้ secondary เพื่อให้ดูต่างจากปกติ */
             border-color: var(--secondary-color);
         }
@@ -391,8 +393,6 @@
 
         /* --- Overlay and Form Styles (Signup & Login) --- */
         .overlay {
-            /* เปลี่ยน display: none; เป็น visibility: hidden; และ opacity: 0; */
-            /* เพื่อให้สามารถทำ transition ได้เมื่อแสดง/ซ่อน */
             visibility: hidden; 
             opacity: 0;
             position: fixed;
@@ -405,16 +405,15 @@
             display: flex; /* ยังคง flex เพื่อจัดตำแหน่ง */
             justify-content: center;
             align-items: center;
-            /* เพิ่ม transition เพื่อความลื่นไหล */
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         
-        .overlay.active { /* ใช้ active แทนการเปลี่ยน display */
+        .overlay.active { 
             visibility: visible;
             opacity: 1;
         }
 
-        .auth-form-container { /* ใช้ class เดียวกันสำหรับ Login และ Signup */
+        .modal-content { /* ใช้ class นี้สำหรับ modal content ทุกประเภท (auth, cart, checkout) */
             background-color: var(--card-background);
             padding: 40px;
             border-radius: 20px;
@@ -427,15 +426,32 @@
             transition: transform 0.3s ease, opacity 0.3s ease; /* เพิ่ม transition */
             border: 2px solid var(--primary-color);
             pointer-events: none; /* ปิดการ interact เมื่อฟอร์มยังไม่ออกมาเต็มที่ */
+            display: none; /* ซ่อนไว้ก่อน */
         }
         
-        .auth-form-container.active { /* ใช้ active แทนการเปลี่ยน display */
+        .modal-content.active { 
             transform: scale(1);
             opacity: 1;
             pointer-events: auto; /* เปิดการ interact */
+            display: block; /* แสดงผล */
         }
 
-        .auth-form-container h2 {
+        /* แยกสไตล์สำหรับแต่ละ Modal */
+        #signup-form-container,
+        #login-form-container {
+            max-width: 500px; /* จำกัดความกว้างสำหรับฟอร์ม Auth */
+        }
+
+        #cart-modal-container {
+            max-width: 600px; /* ให้ตะกร้ากว้างกว่านิดหน่อย */
+        }
+        
+        #checkout-modal-container {
+            max-width: 550px; /* ให้หน้าชำระเงินกว้างกว่า Auth form */
+        }
+
+
+        .modal-content h2 {
             font-size: 2rem;
             color: var(--primary-color);
             margin-bottom: 25px;
@@ -443,12 +459,12 @@
             text-shadow: var(--neon-glow);
         }
 
-        .auth-form-container .form-group {
+        .modal-content .form-group {
             margin-bottom: 20px;
             text-align: left;
         }
 
-        .auth-form-container label {
+        .modal-content label {
             display: block;
             font-size: 1.1rem;
             margin-bottom: 8px;
@@ -456,9 +472,11 @@
             text-shadow: 0 0 3px var(--primary-color);
         }
 
-        .auth-form-container input[type="text"],
-        .auth-form-container input[type="email"],
-        .auth-form-container input[type="password"] {
+        .modal-content input[type="text"],
+        .modal-content input[type="email"],
+        .modal-content input[type="password"],
+        .modal-content input[type="number"],
+        .modal-content textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid var(--secondary-color);
@@ -471,14 +489,16 @@
             box-shadow: inset 0 0 5px var(--secondary-color);
         }
 
-        .auth-form-container input[type="text"]:focus,
-        .auth-form-container input[type="email"]:focus,
-        .auth-form-container input[type="password"]:focus {
+        .modal-content input[type="text"]:focus,
+        .modal-content input[type="email"]:focus,
+        .modal-content input[type="password"]:focus,
+        .modal-content input[type="number"]:focus,
+        .modal-content textarea:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 15px var(--primary-color);
         }
         
-        .auth-form-container .form-message {
+        .modal-content .form-message {
             margin-top: 15px;
             padding: 10px;
             border-radius: 8px;
@@ -489,25 +509,26 @@
             color: var(--text-color); /* Default color */
         }
 
-        .auth-form-container .form-message.show {
+        .modal-content .form-message.show {
             opacity: 1;
         }
 
-        .auth-form-container .form-message.success {
+        .modal-content .form-message.success {
             background-color: rgba(102, 255, 102, 0.15); /* Light green for success */
             border: 1px solid #66ff66;
             color: #66ff66;
             text-shadow: 0 0 5px #66ff66;
         }
 
-        .auth-form-container .form-message.error {
+        .modal-content .form-message.error {
             background-color: rgba(255, 102, 102, 0.15); /* Light red for error */
             border: 1px solid #ff6666;
             color: #ff6666;
             text-shadow: 0 0 5px #ff6666;
         }
 
-        .auth-form-container button[type="submit"] {
+        .modal-content button[type="submit"],
+        .modal-content .btn { /* เพิ่ม .btn สำหรับปุ่มที่ไม่ใช่ submit โดยตรง */
             display: block;
             width: 100%;
             padding: 15px;
@@ -522,15 +543,17 @@
             box-shadow: var(--neon-glow);
             text-shadow: none; /* No text shadow on submit button */
             margin-top: 25px; /* เพิ่มระยะห่างด้านบน */
+            font-family: 'Mitr', sans-serif; /* ให้ปุ่มใช้ font เดียวกัน */
         }
 
-        .auth-form-container button[type="submit"]:hover {
+        .modal-content button[type="submit"]:hover,
+        .modal-content .btn:hover {
             background-color: var(--secondary-color);
             box-shadow: var(--neon-glow-secondary);
             transform: translateY(-2px);
         }
 
-        .auth-form-container .close-btn {
+        .modal-content .close-btn {
             position: absolute;
             top: 15px;
             right: 20px;
@@ -541,19 +564,19 @@
             text-shadow: 0 0 5px var(--text-color);
         }
 
-        .auth-form-container .close-btn:hover {
+        .modal-content .close-btn:hover {
             color: var(--primary-color);
             text-shadow: var(--neon-glow);
         }
         
         /* สลับฟอร์ม */
-        .auth-form-container .toggle-form {
+        .modal-content .toggle-form {
             text-align: center;
             margin-top: 20px;
             font-size: 0.95rem;
         }
 
-        .auth-form-container .toggle-form a {
+        .modal-content .toggle-form a {
             color: var(--secondary-color);
             text-decoration: none;
             font-weight: 500;
@@ -562,8 +585,222 @@
             cursor: pointer;
         }
 
-        .auth-form-container .toggle-form a:hover {
+        .modal-content .toggle-form a:hover {
             text-shadow: var(--neon-glow-secondary);
+        }
+
+        /* --- Cart Modal Specific Styles --- */
+        #cart-items-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            max-height: 300px; /* จำกัดความสูงและเพิ่ม scrollbar */
+            overflow-y: auto;
+            border-radius: 10px;
+            border: 1px solid var(--secondary-color);
+            padding: 10px;
+            background-color: var(--background-color);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-info .item-title {
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            text-shadow: 0 0 3px var(--primary-color);
+        }
+
+        .cart-item-info .item-price {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            margin-top: 5px;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+        }
+
+        .cart-item-actions input[type="number"] {
+            width: 70px;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: var(--card-background);
+            border: 1px solid var(--secondary-color);
+        }
+
+        .cart-item-actions .remove-item-btn {
+            background-color: transparent;
+            color: #ff6666;
+            border: 1px solid #ff6666;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+            box-shadow: inset 0 0 3px #ff6666;
+        }
+
+        .cart-item-actions .remove-item-btn:hover {
+            background-color: #ff6666;
+            color: var(--background-color);
+            box-shadow: 0 0 10px #ff6666;
+        }
+
+        #cart-total {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: right;
+            margin-top: 20px;
+            color: var(--secondary-color);
+            text-shadow: 0 0 5px var(--secondary-color);
+        }
+
+        .cart-action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .cart-action-buttons .btn {
+            flex: 1;
+        }
+
+        .cart-action-buttons .btn.checkout {
+            background-color: var(--primary-color);
+            box-shadow: var(--neon-glow);
+        }
+        .cart-action-buttons .btn.checkout:hover {
+            background-color: var(--secondary-color);
+            box-shadow: var(--neon-glow-secondary);
+        }
+
+        .cart-action-buttons .btn.continue-shopping {
+            background-color: transparent;
+            border: 2px solid var(--text-color);
+            color: var(--text-color);
+            box-shadow: inset 0 0 5px var(--text-color);
+        }
+        .cart-action-buttons .btn.continue-shopping:hover {
+            background-color: var(--text-color);
+            color: var(--background-color);
+            box-shadow: 0 0 10px var(--text-color);
+        }
+
+        /* --- Checkout Modal Specific Styles --- */
+        #checkout-summary {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 10px;
+            background-color: var(--background-color);
+        }
+
+        #checkout-summary h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            text-shadow: 0 0 3px var(--secondary-color);
+        }
+
+        #checkout-summary .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+        }
+
+        #checkout-summary .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        #checkout-summary .summary-total {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: right;
+            margin-top: 10px;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        #payment-method-selection {
+            margin-bottom: 20px;
+        }
+
+        #payment-method-selection label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        #payment-method-selection input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2); /* ทำให้ radio button ใหญ่ขึ้น */
+            accent-color: var(--primary-color); /* เปลี่ยนสี default ของ radio button */
+        }
+        
+        #payment-details {
+            border-top: 1px solid var(--secondary-color);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        #qr-code-display {
+            text-align: center;
+            margin-top: 20px;
+            border: 2px dashed var(--secondary-color);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        #qr-code-display img {
+            max-width: 150px;
+            height: auto;
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        #qr-code-display p {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .payment-info {
+            background-color: var(--background-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .payment-info p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        .payment-info strong {
+            color: var(--secondary-color);
+            text-shadow: 0 0 2px var(--secondary-color);
         }
 
 
@@ -602,12 +839,15 @@
                 padding: 12px;
                 font-size: 1.2rem;
             }
-            .auth-form-container {
+            .modal-content {
                 padding: 25px;
                 width: 95%;
             }
-            .auth-form-container h2 {
+            .modal-content h2 {
                 font-size: 1.7rem;
+            }
+            .cart-action-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -618,7 +858,7 @@
         <header class="header" id="main-header">
             <div class="logo">VAkung Shop</div>
             <nav class="user-actions" id="user-actions-nav">
-                <a href="#"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+                <a href="#" id="cart-link"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
                 <a href="#" id="login-link"><i class="fas fa-user-circle"></i> เข้าสู่ระบบ</a>
                 <a href="#" id="signup-link"><i class="fas fa-user-plus"></i> สมัครสมาชิก</a>
                 </nav>
@@ -632,7 +872,7 @@
 
         <main id="roblox-content" class="content-section active">
             
-            <div class="product-card">
+            <div class="product-card" data-id="R001" data-name="รหัส Grow a Garden - ไอเทมลับ" data-price="49" data-image="https://placehold.co/400x300/FFC0CB/333333?text=Grow+a+Garden+Roblox">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/FFC0CB/333333?text=Grow+a+Garden+Roblox" alt="รูปสินค้า รหัสเกม Grow a Garden Roblox" class="product-image">
                     <div class="product-tag">🌳 สวนสุดปัง</div>
@@ -640,22 +880,22 @@
                 <div class="info-container">
                     <h2 class="product-title">รหัส Grow a Garden - ไอเทมลับ</h2>
                     <div class="product-price">49<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
                 </div>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-id="R002" data-name="บัตรเติม Robux 200 R$" data-price="349" data-image="https://placehold.co/400x300/A2D2FF/333333?text=Roblox+Gift+Card">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/A2D2FF/333333?text=Roblox+Gift+Card" alt="รูปสินค้า Roblox Gift Card" class="product-image">
                 </div>
                 <div class="info-container">
                     <h2 class="product-title">บัตรเติม Robux 200 R$</h2>
                     <div class="product-price">349<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
                 </div>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-id="R003" data-name="รหัสชุดแฟชั่นสุด Exclusive" data-price="99" data-image="https://placehold.co/400x300/FFD9A2/333333?text=Roblox+Outfit+Code">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/FFD9A2/333333?text=Roblox+Outfit+Code" alt="รูปสินค้า รหัสชุดแฟชั่น Roblox" class="product-image">
                     <div class="product-tag">👗 แฟชั่น</div>
@@ -663,11 +903,11 @@
                 <div class="info-container">
                     <h2 class="product-title">รหัสชุดแฟชั่นสุด Exclusive</h2>
                     <div class="product-price">99<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
                 </div>
             </div>
             
-            <div class="product-card">
+            <div class="product-card" data-id="R004" data-name="Gamepass ปลดล็อคโหมดเทพ" data-price="129" data-image="https://placehold.co/400x300/CDB4DB/333333?text=Roblox+Gamepass">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/CDB4DB/333333?text=Roblox+Gamepass" alt="รูปสินค้า Gamepass Roblox" class="product-image">
                     <div class="product-tag">🚀 แรงค์อัพ</div>
@@ -675,7 +915,7 @@
                 <div class="info-container">
                     <h2 class="product-title">Gamepass ปลดล็อคโหมดเทพ</h2>
                     <div class="product-price">129<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
                 </div>
             </div>
 
@@ -683,7 +923,7 @@
 
         <main id="freefire-codes" class="content-section">
             
-            <div class="product-card">
+            <div class="product-card" data-id="F001" data-name="รหัส Free Fire: สกินปืนหายาก" data-price="69" data-image="https://placehold.co/400x300/f08080/333333?text=Free+Fire+Code+1">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/f08080/333333?text=Free+Fire+Code+1" alt="รูปสินค้า รหัส Free Fire ลับ" class="product-image">
                     <div class="product-tag">🔫 สกินปืน</div>
@@ -691,22 +931,22 @@
                 <div class="info-container">
                     <h2 class="product-title">รหัส Free Fire: สกินปืนหายาก</h2>
                     <div class="product-price">69<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
                 </div>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-id="F002" data-name="เติม Diamond Free Fire 1000" data-price="299" data-image="https://placehold.co/400x300/98fb98/333333?text=Free+Fire+Diamond">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/98fb98/333333?text=Free+Fire+Diamond" alt="รูปสินค้า เติม Diamond Free Fire" class="product-image">
                 </div>
                 <div class="info-container">
                     <h2 class="product-title">เติม Diamond Free Fire 1000</h2>
                     <div class="product-price">299<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
                 </div>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-id="F003" data-name="รหัส Free Fire: ชุด Bundle Limited" data-price="199" data-image="https://placehold.co/400x300/add8e6/333333?text=Free+Fire+Bundle">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/add8e6/333333?text=Free+Fire+Bundle" alt="รูปสินค้า รหัส Bundle Free Fire" class="product-image">
                     <div class="product-tag">👕 แรร์ไอเทม</div>
@@ -714,14 +954,14 @@
                 <div class="info-container">
                     <h2 class="product-title">รหัส Free Fire: ชุด Bundle Limited</h2>
                     <div class="product-price">199<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
                 </div>
             </div>
 
         </main>
 
         <main id="freefire-farm" class="content-section">
-            <div class="product-card">
+            <div class="product-card" data-id="FF001" data-name="บริการฟาร์มแรงค์ Free Fire" data-price="99" data-image="https://placehold.co/400x300/87CEEB/333333?text=รับฟาร์ม+แรงค์">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/87CEEB/333333?text=รับฟาร์ม+แรงค์" alt="รูปบริการรับฟาร์มแรงค์ Free Fire" class="product-image">
                     <div class="product-tag">🏆 แรงค์เทพ</div>
@@ -729,11 +969,11 @@
                 <div class="info-container">
                     <h2 class="product-title">บริการฟาร์มแรงค์ Free Fire</h2>
                     <div class="product-price">เริ่มต้น 99<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
+                    <button type="button" class="buy-button ripple" disabled><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
                 </div>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-id="FF002" data-name="บริการฟาร์มเหรียญทอง Free Fire" data-price="50" data-image="https://placehold.co/400x300/FFD700/333333?text=รับฟาร์ม+เหรียญ">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/FFD700/333333?text=รับฟาร์ม+เหรียญ" alt="รูปบริการรับฟาร์มเหรียญ Free Fire" class="product-image">
                     <div class="product-tag">💰 เหรียญทอง</div>
@@ -741,11 +981,11 @@
                 <div class="info-container">
                     <h2 class="product-title">บริการฟาร์มเหรียญทอง Free Fire</h2>
                     <div class="product-price">เริ่มต้น 50<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
+                    <button type="button" class="buy-button ripple" disabled><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
                 </div>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-id="FF003" data-name="บริการฟาร์มอีเวนต์ Free Fire" data-price="75" data-image="https://placehold.co/400x300/FFB6C1/333333?text=รับฟาร์ม+อีเวนต์">
                 <div class="image-container">
                     <img src="https://placehold.co/400x300/FFB6C1/333333?text=รับฟาร์ม+อีเวนต์" alt="รูปบริการรับฟาร์มอีเวนต์ Free Fire" class="product-image">
                     <div class="product-tag">🗓️ อีเวนต์</div>
@@ -753,7 +993,7 @@
                 <div class="info-container">
                     <h2 class="product-title">บริการฟาร์มอีเวนต์ Free Fire</h2>
                     <div class="product-price">เริ่มต้น 75<span class="currency">บาท</span></div>
-                    <button type="button" class="buy-button"><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
+                    <button type="button" class="buy-button ripple" disabled><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
                 </div>
             </div>
         </main>
@@ -764,9 +1004,9 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <div class="overlay" id="auth-overlay">
-        <div class="auth-form-container" id="signup-form-container">
-            <span class="close-btn" onclick="closeAuthForm()">&times;</span>
+    <div class="overlay" id="global-overlay">
+        <div class="modal-content" id="signup-form-container">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
             <h2>สมัครสมาชิก VAkung Shop</h2>
             <form id="signup-form">
                 <div class="form-group">
@@ -793,8 +1033,8 @@
             </form>
         </div>
 
-        <div class="auth-form-container" id="login-form-container" style="display: none;">
-            <span class="close-btn" onclick="closeAuthForm()">&times;</span>
+        <div class="modal-content" id="login-form-container">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
             <h2>เข้าสู่ระบบ VAkung Shop</h2>
             <form id="login-form">
                 <div class="form-group">
@@ -812,12 +1052,94 @@
                 </div>
             </form>
         </div>
+
+        <div class="modal-content" id="cart-modal-container">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <h2>ตะกร้าสินค้า</h2>
+            <ul id="cart-items-list">
+                </ul>
+            <div id="cart-total">รวม: 0 บาท</div>
+            <div class="cart-action-buttons">
+                <button type="button" class="btn checkout ripple" onclick="showCheckoutModal()">
+                    <i class="fas fa-cash-register"></i> ชำระเงิน
+                </button>
+                <button type="button" class="btn continue-shopping ripple" onclick="closeAllModals()">
+                    <i class="fas fa-shopping-basket"></i> ช้อปต่อ
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-content" id="checkout-modal-container">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <h2>ชำระเงิน</h2>
+            <div id="checkout-summary">
+                <h3>สรุปรายการสินค้า</h3>
+                <div id="checkout-summary-list"></div>
+                <div class="summary-total">รวม: <span id="checkout-total-display">0</span> บาท</div>
+            </div>
+
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="contact-email">อีเมล (รับรหัส/บริการ):</label>
+                    <input type="email" id="contact-email" name="contact_email" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact-phone">เบอร์โทรศัพท์ (ไม่บังคับ):</label>
+                    <input type="text" id="contact-phone" name="contact_phone" placeholder="08XXXXXXXX">
+                </div>
+
+                <div id="payment-method-selection">
+                    <h3>เลือกช่องทางชำระเงิน:</h3>
+                    <label>
+                        <input type="radio" name="payment_method" value="promptpay" checked> PromptPay / QR Code
+                    </label>
+                    <label>
+                        <input type="radio" name="payment_method" value="truemoney"> TrueMoney Wallet
+                    </label>
+                </div>
+
+                <div id="payment-details">
+                    <div id="promptpay-details" class="payment-info">
+                        <div id="qr-code-display">
+                            <img src="" alt="QR Code" id="promptpay-qr-code">
+                            <p>สแกน QR Code เพื่อชำระเงิน (ยอด: <span id="promptpay-amount-display">0</span> บาท)</p>
+                        </div>
+                        <p><strong>เบอร์โทรศัพท์ PromptPay:</strong> 081-575-8225</p>
+                        <p class="form-message success" style="opacity: 1; margin-top: 15px;">โปรดตรวจสอบยอดเงินและชื่อผู้รับให้ถูกต้องก่อนโอน</p>
+                    </div>
+
+                    <div id="truemoney-details" class="payment-info" style="display: none;">
+                        <p><strong>ชื่อบัญชี:</strong> นาย วาคุง ช็อป</p>
+                        <p><strong>เบอร์โทรศัพท์ TrueMoney Wallet:</strong> 081-575-8225</p>
+                        <p class="form-message success" style="opacity: 1; margin-top: 15px;">โปรดตรวจสอบยอดเงินและชื่อผู้รับให้ถูกต้องก่อนโอน</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transfer-slip">แนบสลิปโอนเงิน:</label>
+                    <input type="file" id="transfer-slip" name="transfer_slip" accept="image/*" required>
+                    <p class="form-message" id="slip-upload-message"></p>
+                </div>
+
+                <div class="form-message" id="checkout-message"></div>
+                <button type="submit" class="ripple">ยืนยันการสั่งซื้อ</button>
+                <button type="button" class="btn continue-shopping ripple" onclick="showCartModal()">
+                    <i class="fas fa-arrow-left"></i> กลับไปตะกร้าสินค้า
+                </button>
+            </form>
+        </div>
+
     </div>
+
+    <button onclick="scrollToTop()" id="scrollToTopBtn" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <script>
         // --- Global Variables (Simulating Backend Storage) ---
         let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let cart = JSON.parse(localStorage.getItem('shoppingCart')) || []; // ตะกร้าสินค้า
 
         // --- Utility Functions ---
         function showMessage(elementId, message, type) {
@@ -831,11 +1153,10 @@
 
         // --- 1. Show Content Function (Optimized for Animation Delay) ---
         function showContent(contentId) {
-            closeAuthForm(); 
+            closeAllModals(); // ปิด Modal ทั้งหมดก่อนแสดง Content หลัก
 
             const allContentSections = document.querySelectorAll('.content-section');
             allContentSections.forEach(content => {
-                // ใช้ opacity และ pointer-events แทน display: none เพื่อ Transition ได้
                 content.classList.remove('active'); 
                 content.style.opacity = 0;
                 content.style.pointerEvents = 'none';
@@ -854,7 +1175,6 @@
 
             const selectedContent = document.getElementById(contentId);
             if (selectedContent) {
-                // เปิดใช้งาน content section ด้วย class 'active'
                 selectedContent.classList.add('active');
                 selectedContent.style.opacity = 1;
                 selectedContent.style.pointerEvents = 'auto';
@@ -866,24 +1186,25 @@
                     card.style.opacity = 0; 
                     const row = Math.floor(index / numCols);
                     const col = index % numCols;
-                    // ปรับ animation delay ให้ลื่นขึ้นและใช้ CSS Animation ที่ efficient
                     card.style.animationDelay = (0.05 * (row + col)) + 's'; 
                 });
             }
 
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
+            // ในฟังก์ชัน showContent นี้ event.currentTarget จะมาจาก onclick HTML
+            // ดังนั้นไม่จำเป็นต้องเช็ค event
+            const clickedButton = document.querySelector(`.game-button[onclick*="${contentId}"]`);
+            if (clickedButton) {
+                clickedButton.classList.add('active');
             }
         }
 
         // --- 2. Dynamic Neon Glow on Hover (Optimized) ---
-        const neonElements = document.querySelectorAll('.header, .game-selection, .product-card');
+        // เพิ่ม .cart-modal-content และ .checkout-modal-content ใน neonElements
+        const neonElements = document.querySelectorAll('.header, .game-selection, .product-card, #cart-modal-container, #checkout-modal-container');
 
         neonElements.forEach(element => {
-            // ใช้ CSS classes แทนการเปลี่ยน inline style บ่อยๆ
             element.addEventListener('mouseenter', () => {
                 element.classList.add('neon-active');
-                // เฉพาะโลโก้และตะกร้าที่มีอนิเมชันเฉพาะ
                 const isHeaderLogo = element.querySelector('.header .logo');
                 const isHeaderCart = element.querySelector('.header .user-actions .fa-shopping-cart');
                 if (isHeaderLogo) {
@@ -908,11 +1229,11 @@
         });
 
         // --- 3. Ripple Effect on Click ---
-        const rippleElements = document.querySelectorAll('.product-card, .game-button, .buy-button, #signup-link, #login-link, .close-btn, #scrollToTopBtn, .auth-form-container button[type="submit"], .toggle-form a');
+        // เพิ่ม #cart-link และ checkout buttons ใน rippleElements
+        const rippleElements = document.querySelectorAll('.product-card, .game-button, .buy-button, #signup-link, #login-link, .close-btn, #scrollToTopBtn, .modal-content button[type="submit"], .modal-content .btn, .toggle-form a, #cart-link');
 
         rippleElements.forEach(element => {
             element.addEventListener('click', function(e) {
-                // เพิ่ม guard clause เพื่อลดการทำงานที่ไม่จำเป็น
                 if (this.classList.contains('active') && this.classList.contains('game-button')) {
                     return; 
                 }
@@ -944,8 +1265,8 @@
         let scrollTimeout;
 
         window.onscroll = function() {
-            clearTimeout(scrollTimeout); // Clear previous timeout
-            scrollTimeout = setTimeout(() => { // Set a new timeout
+            clearTimeout(scrollTimeout); 
+            scrollTimeout = setTimeout(() => { 
                 if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
                     scrollToTopBtn.style.display = "block";
                     scrollToTopBtn.style.opacity = "0.9";
@@ -953,7 +1274,7 @@
                     scrollToTopBtn.style.display = "none";
                     scrollToTopBtn.style.opacity = "0";
                 }
-            }, 100); // Only run after 100ms of no scrolling (throttle)
+            }, 100); 
         };
 
         function scrollToTop() {
@@ -963,91 +1284,96 @@
             });
         }
 
-        // --- 5. Authentication Form Handling (Login & Signup - Optimized Transitions) ---
-        const loginLink = document.getElementById('login-link');
-        const signupLink = document.getElementById('signup-link');
-        const userActionsNav = document.getElementById('user-actions-nav');
-
-        const authOverlay = document.getElementById('auth-overlay');
+        // --- 5. Modal Handling (Generalized for all Modals) ---
+        const globalOverlay = document.getElementById('global-overlay');
         const signupFormContainer = document.getElementById('signup-form-container');
         const loginFormContainer = document.getElementById('login-form-container');
+        const cartModalContainer = document.getElementById('cart-modal-container');
+        const checkoutModalContainer = document.getElementById('checkout-modal-container');
 
-        const signupForm = document.getElementById('signup-form');
-        const loginForm = document.getElementById('login-form');
+        const allModals = [signupFormContainer, loginFormContainer, cartModalContainer, checkoutModalContainer];
 
-        const signupMessage = document.getElementById('signup-message');
-        const loginMessage = document.getElementById('login-message');
+        function openModal(modalElement) {
+            // First, quickly hide ALL other modals by removing active class and setting display: none
+            allModals.forEach(modal => {
+                if (modal !== modalElement && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                    modal.style.display = 'none'; // Instantly hide other active modals
+                } else if (modal !== modalElement) {
+                    modal.style.display = 'none'; // Ensure other non-active modals are also hidden
+                }
+            });
 
-        signupLink.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            showSignupForm();
-        });
-
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginForm();
-        });
-
-        function openAuthForm() {
-            authOverlay.classList.add('active'); // เปิด overlay
+            globalOverlay.classList.add('active');
             document.querySelector('.container').style.filter = 'blur(5px)'; 
             document.body.style.overflow = 'hidden'; 
+
+            modalElement.style.display = 'block'; // Make the target modal visible
+            setTimeout(() => { // Small delay for CSS transition to apply
+                modalElement.classList.add('active');
+            }, 10); 
         }
 
-        function closeAuthForm() {
-            if (!authOverlay.classList.contains('active')) {
-                return; // ถ้าไม่ได้เปิดอยู่ ก็ไม่ต้องทำอะไร
+        function closeAllModals() {
+            if (!globalOverlay.classList.contains('active')) {
+                return; // If no modal is active, do nothing
             }
 
-            // Remove active classes to start transition out
-            authOverlay.classList.remove('active');
-            signupFormContainer.classList.remove('active');
-            loginFormContainer.classList.remove('active');
+            globalOverlay.classList.remove('active');
+            document.querySelector('.container').style.filter = 'none'; 
+            document.body.style.overflow = ''; 
 
-            // Hide and reset elements AFTER transitions complete
-            setTimeout(() => {
-                // Ensure the form containers are actually hidden by display: none to prevent interaction
-                signupFormContainer.style.display = 'none';
-                loginFormContainer.style.display = 'none';
+            allModals.forEach(modal => {
+                modal.classList.remove('active'); // Start fade out transition
+            });
 
-                document.querySelector('.container').style.filter = 'none'; 
-                document.body.style.overflow = ''; 
-                
+            setTimeout(() => { // After transition, set display: none for all modals
+                allModals.forEach(modal => {
+                    modal.style.display = 'none'; 
+                });
+                // Reset forms and messages only for auth forms when closing from outside
                 signupForm.reset();
                 loginForm.reset();
                 signupMessage.textContent = '';
                 signupMessage.classList.remove('show', 'success', 'error');
                 loginMessage.textContent = '';
                 loginMessage.classList.remove('show', 'success', 'error');
-            }, 300); // Match this timeout to the CSS transition duration (0.3s)
+                checkoutForm.reset(); // Reset checkout form as well
+                document.getElementById('contact-email').value = ''; // Clear email input
+                document.getElementById('contact-phone').value = ''; // Clear phone input
+                document.getElementById('transfer-slip').value = ''; // Clear file input
+                document.getElementById('checkout-message').textContent = '';
+                document.getElementById('checkout-message').classList.remove('show', 'success', 'error');
+                document.getElementById('slip-upload-message').textContent = '';
+                document.getElementById('slip-upload-message').classList.remove('show', 'success', 'error');
+
+            }, 300); // Match CSS transition duration
         }
 
-        function showSignupForm() {
-            // ซ่อนฟอร์มอื่นๆ ทันที
-            loginFormContainer.style.display = 'none';
-            loginFormContainer.classList.remove('active'); // ตรวจสอบให้แน่ใจว่าไม่มี active class
+        // --- Authentication Form Handling ---
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+        const signupMessage = document.getElementById('signup-message');
+        const loginMessage = document.getElementById('login-message');
+        const userActionsNav = document.getElementById('user-actions-nav'); // กำหนดค่า userActionsNav ที่นี่
 
-            // แสดงฟอร์มที่ต้องการ
-            signupFormContainer.style.display = 'block';
-            // เพิ่ม active class หลังจาก delay เล็กน้อยเพื่อให้ transition ทำงาน
-            setTimeout(() => {
-                signupFormContainer.classList.add('active');
-            }, 10); // Small delay for CSS transition to apply correctly
-            openAuthForm();
+        document.getElementById('signup-link').addEventListener('click', (e) => {
+            e.preventDefault(); showSignupForm();
+        });
+        document.getElementById('login-link').addEventListener('click', (e) => {
+            e.preventDefault(); showLoginForm();
+        });
+        document.getElementById('cart-link').addEventListener('click', (e) => {
+            e.preventDefault(); showCartModal();
+        });
+
+
+        function showSignupForm() {
+            openModal(signupFormContainer);
         }
 
         function showLoginForm() {
-            // ซ่อนฟอร์มอื่นๆ ทันที
-            signupFormContainer.style.display = 'none';
-            signupFormContainer.classList.remove('active'); // ตรวจสอบให้แน่ใจว่าไม่มี active class
-
-            // แสดงฟอร์มที่ต้องการ
-            loginFormContainer.style.display = 'block';
-            // เพิ่ม active class หลังจาก delay เล็กน้อยเพื่อให้ transition ทำงาน
-            setTimeout(() => {
-                loginFormContainer.classList.add('active');
-            }, 10); // Small delay for CSS transition to apply correctly
-            openAuthForm();
+            openModal(loginFormContainer);
         }
 
         // --- Signup Logic (Simulated Backend) ---
@@ -1062,7 +1388,6 @@
                 showMessage('signup-message', 'รหัสผ่านไม่ตรงกัน โปรดตรวจสอบอีกครั้ง!', 'error');
                 return;
             }
-
             if (registeredUsers.some(user => user.username === username || user.email === email)) {
                 showMessage('signup-message', 'ชื่อผู้ใช้หรืออีเมลนี้มีผู้ใช้งานแล้ว!', 'error');
                 return;
@@ -1083,8 +1408,7 @@
                 updateUserUI(); 
                 
                 setTimeout(() => {
-                    closeAuthForm();
-                    // Show welcome message on main page after form is fully closed
+                    closeAllModals();
                     setTimeout(() => { 
                         showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับสู่ VAkung Shop!`, 'success'); 
                     }, 100); 
@@ -1113,7 +1437,7 @@
                     
                     updateUserUI(); 
                     setTimeout(() => {
-                        closeAuthForm();
+                        closeAllModals();
                         setTimeout(() => { 
                              showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับกลับมา!`, 'success'); 
                         }, 100);
@@ -1134,12 +1458,18 @@
 
         // --- Update User Interface based on Login Status ---
         function updateUserUI() {
+            const userActionsNav = document.getElementById('user-actions-nav'); // ตรวจสอบให้แน่ใจว่า userActionsNav ถูกเรียกใช้ใน scope ที่ถูกต้อง
             userActionsNav.innerHTML = ''; 
 
             const cartLink = document.createElement('a');
             cartLink.href = '#';
+            cartLink.id = 'cart-link'; // เพิ่ม ID
             cartLink.innerHTML = '<i class="fas fa-shopping-cart"></i> ตะกร้า';
             cartLink.classList.add('ripple'); 
+            cartLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showCartModal();
+            });
             userActionsNav.appendChild(cartLink);
 
             if (currentUser) {
@@ -1181,18 +1511,21 @@
                 });
                 userActionsNav.appendChild(signupLinkElement);
             }
-            addRippleEffectToNewElements();
+            addRippleEffectToNewElements(); // Re-apply ripple listeners
         }
 
+        // สำหรับการเพิ่ม Ripple Effect ให้กับ Elements ที่สร้างขึ้นใหม่
         function addRippleEffectToNewElements() {
-            const newlyCreatedRippleElements = document.querySelectorAll('.auth-form-container button[type="submit"], .toggle-form a, #login-link, #signup-link, #logout-link, #scrollToTopBtn');
+            const newlyCreatedRippleElements = document.querySelectorAll('.modal-content button[type="submit"], .modal-content .btn, .toggle-form a, #login-link, #signup-link, #logout-link, #scrollToTopBtn, #cart-link, .buy-button');
             
             newlyCreatedRippleElements.forEach(element => {
+                // ตรวจสอบว่า element นี้ยังไม่มี listener เพื่อป้องกันการเพิ่มซ้ำ
                 if (!element._hasRippleListener) { 
                     element.addEventListener('click', function(e) {
                         if (this.classList.contains('active') && this.classList.contains('game-button')) {
                             return; 
                         }
+                        // ไม่ให้ ripple เกิดขึ้นบน icon เมื่อคลิกปุ่ม
                         if (e.target.tagName === 'I' && (this.id === 'scrollToTopBtn' || this.classList.contains('close-btn'))) {
                              return;
                         }
@@ -1214,10 +1547,230 @@
                             ripple.remove();
                         });
                     });
-                    element._hasRippleListener = true; 
+                    element._hasRippleListener = true; // ตั้งค่า flag ว่ามี listener แล้ว
                 }
             });
         }
+
+        // --- Shopping Cart Functions ---
+        const cartItemsList = document.getElementById('cart-items-list');
+        const cartTotalDisplay = document.getElementById('cart-total');
+
+        function saveCart() {
+            localStorage.setItem('shoppingCart', JSON.stringify(cart));
+            updateCartCount(); // อัปเดตจำนวนสินค้าในตะกร้าที่ไอคอน
+        }
+
+        function updateCartCount() {
+            const cartLink = document.getElementById('cart-link');
+            if (cartLink) {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartLink.innerHTML = `<i class="fas fa-shopping-cart"></i> ตะกร้า ${totalItems > 0 ? `(${totalItems})` : ''}`;
+            }
+        }
+
+        function renderCart() {
+            cartItemsList.innerHTML = ''; // Clear current items
+            let total = 0;
+
+            if (cart.length === 0) {
+                cartItemsList.innerHTML = '<li style="text-align: center; color: rgba(255,255,255,0.7); padding: 20px;">ไม่มีสินค้าในตะกร้า</li>';
+            } else {
+                cart.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('cart-item');
+                    listItem.innerHTML = `
+                        <div class="cart-item-info">
+                            <div class="item-title">${item.name}</div>
+                            <div class="item-price">${item.price} บาท/ชิ้น</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <input type="number" value="${item.quantity}" min="1" 
+                                onchange="updateCartQuantity('${item.id}', this.value)"
+                                oninput="this.value = Math.max(1, parseInt(this.value) || 1);">
+                            <button class="remove-item-btn ripple" onclick="removeFromCart('${item.id}')">ลบ</button>
+                        </div>
+                    `;
+                    cartItemsList.appendChild(listItem);
+                    total += item.price * item.quantity;
+                });
+            }
+            cartTotalDisplay.textContent = `รวม: ${total} บาท`;
+            saveCart();
+        }
+
+        function addToCart(productId) {
+            const productCard = document.querySelector(`.product-card[data-id="${productId}"]`);
+            if (!productCard) {
+                console.error('Product card not found for ID:', productId);
+                return;
+            }
+
+            const productName = productCard.dataset.name;
+            const productPrice = parseFloat(productCard.dataset.price);
+            
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                });
+            }
+            showMessage('login-message', `${productName} ถูกเพิ่มเข้าตะกร้าแล้ว!`, 'success');
+            renderCart(); // Render cart immediately after adding
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            renderCart();
+            showMessage('login-message', 'สินค้านี้ถูกลบออกจากตะกร้าแล้ว', 'error');
+        }
+
+        function updateCartQuantity(productId, quantity) {
+            const newQuantity = parseInt(quantity);
+            if (isNaN(newQuantity) || newQuantity < 1) {
+                return; // Prevent invalid input
+            }
+            const itemToUpdate = cart.find(item => item.id === productId);
+            if (itemToUpdate) {
+                itemToUpdate.quantity = newQuantity;
+                renderCart();
+            }
+        }
+
+        function showCartModal() {
+            renderCart(); // Always re-render cart when opening the modal
+            openModal(cartModalContainer);
+        }
+
+        // --- Checkout Functions ---
+        const checkoutForm = document.getElementById('checkout-form');
+        const checkoutSummaryList = document.getElementById('checkout-summary-list');
+        const checkoutTotalDisplay = document.getElementById('checkout-total-display');
+        const paymentMethodRadios = document.querySelectorAll('input[name="payment_method"]');
+        const promptpayDetails = document.getElementById('promptpay-details');
+        const truemoneyDetails = document.getElementById('truemoney-details'); 
+        const promptpayQRCode = document.getElementById('promptpay-qr-code');
+        const promptpayAmountDisplay = document.getElementById('promptpay-amount-display'); 
+
+        const YOUR_PROMPT_PAY_NUMBER = '0815758225'; // เบอร์โทรศัพท์ PromptPay ของคุณ
+
+        function renderCheckoutSummary() {
+            checkoutSummaryList.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                checkoutSummaryList.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); padding: 10px;">ไม่มีสินค้าในตะกร้า</p>';
+                document.querySelector('#checkout-modal-container button[type="submit"]').disabled = true; // Disable submit button
+            } else {
+                document.querySelector('#checkout-modal-container button[type="submit"]').disabled = false; // Enable submit button
+                cart.forEach(item => {
+                    const summaryItem = document.createElement('div');
+                    summaryItem.classList.add('summary-item');
+                    summaryItem.innerHTML = `
+                        <span>${item.name} x ${item.quantity}</span>
+                        <span>${(item.price * item.quantity).toFixed(2)} บาท</span>
+                    `;
+                    checkoutSummaryList.appendChild(summaryItem);
+                    total += item.price * item.quantity;
+                });
+            }
+            checkoutTotalDisplay.textContent = total.toFixed(2);
+            promptpayAmountDisplay.textContent = total.toFixed(2); // อัปเดตยอดเงินที่แสดงใต้ QR Code
+
+            // Update QR Code source
+            if (total > 0) {
+                promptpayQRCode.src = `https://promptpay.io/${YOUR_PROMPT_PAY_NUMBER}/${total.toFixed(2)}.png`;
+            } else {
+                promptpayQRCode.src = `https://promptpay.io/${YOUR_PROMPT_PAY_NUMBER}/0.00.png`; // Show QR for 0 if cart is empty
+            }
+        }
+
+        function showCheckoutModal() {
+            if (cart.length === 0) {
+                showMessage('login-message', 'กรุณาเลือกสินค้าใส่ตะกร้าก่อนทำรายการชำระเงิน', 'error');
+                return;
+            }
+            renderCheckoutSummary();
+            // Set initial payment method display
+            updatePaymentMethodDisplay(); 
+            openModal(checkoutModalContainer);
+        }
+
+        function updatePaymentMethodDisplay() {
+            const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
+            // Hide all payment details first
+            promptpayDetails.style.display = 'none';
+            truemoneyDetails.style.display = 'none'; 
+            
+            if (selectedMethod === 'promptpay') {
+                promptpayDetails.style.display = 'block';
+            } else if (selectedMethod === 'truemoney') { 
+                truemoneyDetails.style.display = 'block'; 
+            }
+        }
+
+        // Listen for changes in payment method radio buttons
+        paymentMethodRadios.forEach(radio => {
+            radio.addEventListener('change', updatePaymentMethodDisplay);
+        });
+
+        // Checkout form submission (simulated)
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const contactEmail = document.getElementById('contact-email').value.trim();
+            const contactPhone = document.getElementById('contact-phone').value.trim();
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+            const transferSlip = document.getElementById('transfer-slip').files[0];
+            const checkoutMessageElement = document.getElementById('checkout-message');
+
+            if (!contactEmail) {
+                showMessage('checkout-message', 'กรุณากรอกอีเมลสำหรับติดต่อ', 'error');
+                return;
+            }
+
+            if (!transferSlip) {
+                showMessage('checkout-message', 'กรุณาแนบสลิปโอนเงิน', 'error');
+                return;
+            }
+
+            showMessage('checkout-message', 'กำลังยืนยันการสั่งซื้อ...', 'info');
+
+            // Simulate file upload and order processing
+            setTimeout(() => {
+                // In a real application, you would send this data to your server:
+                // - cart contents
+                // - contact email/phone
+                // - payment method
+                // - transferSlip (upload to server storage)
+
+                console.log('Order Details:', {
+                    cart: cart,
+                    contactEmail: contactEmail,
+                    contactPhone: contactPhone,
+                    paymentMethod: paymentMethod,
+                    slipFileName: transferSlip ? transferSlip.name : 'No file'
+                });
+
+                showMessage('checkout-message', 'สั่งซื้อสำเร็จ! เราจะตรวจสอบสลิปและติดต่อกลับทางอีเมล/โทรศัพท์เร็วๆ นี้', 'success');
+                cart = []; // Clear cart after successful order
+                saveCart(); // Update local storage and cart count
+                renderCart(); // Re-render cart modal to show empty
+                
+                // Close checkout modal after a delay
+                setTimeout(() => {
+                    closeAllModals();
+                    showMessage('login-message', 'ขอบคุณที่อุดหนุน VAkung Shop!', 'success');
+                }, 3000);
+
+            }, 2000); // Simulate network delay for order processing
+        });
 
 
         // --- Initial Load ---
@@ -1229,11 +1782,22 @@
                 card.style.opacity = 0;
                 const row = Math.floor(index / numCols);
                 const col = index % numCols;
-                card.style.animationDelay = (0.6 + (0.05 * (row + col))) + 's'; /* ปรับ delay ให้ลื่นขึ้น */
+                card.style.animationDelay = (0.6 + (0.05 * (row + col))) + 's'; 
             });
 
             updateUserUI(); 
             addRippleEffectToNewElements(); 
+            updateCartCount(); // Initial update of cart count
+            
+            // Add event listeners to "เพิ่มลงตะกร้า" buttons
+            document.querySelectorAll('.buy-button').forEach(button => {
+                if (!button.disabled) { // Only add listener if button is not disabled
+                    button.addEventListener('click', (e) => {
+                        const productId = e.currentTarget.closest('.product-card').dataset.id;
+                        addToCart(productId);
+                    });
+                }
+            });
         });
     </script>
 
