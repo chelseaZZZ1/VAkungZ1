@@ -79,11 +79,11 @@
             }
             50% {
                 transform: translateY(-5px);
-                filter: drop-shadow(0 0 5px var(--primary-color));
+                filter: drop_shadow(0 0 5px var(--primary-color));
             }
             100% {
                 transform: translateY(0);
-                filter: drop-shadow(var(--neon-glow));
+                filter: drop_shadow(var(--neon-glow));
             }
         }
 
@@ -138,7 +138,8 @@
         .game-selection.neon-active,
         .product-card.neon-active,
         .cart-modal-content.neon-active, /* เพิ่มสำหรับ cart modal */
-        .checkout-modal-content.neon-active { /* เพิ่มสำหรับ checkout modal */
+        .checkout-modal-content.neon-active, /* เพิ่มสำหรับ checkout modal */
+        .forgot-password-modal-content.neon-active { /* เพิ่มสำหรับ forgot password modal */
             box-shadow: var(--neon-glow-secondary); /* ใช้ secondary เพื่อให้ดูต่างจากปกติ */
             border-color: var(--secondary-color);
         }
@@ -413,7 +414,7 @@
             opacity: 1;
         }
 
-        .modal-content { /* ใช้ class นี้สำหรับ modal content ทุกประเภท (auth, cart, checkout) */
+        .modal-content { /* ใช้ class นี้สำหรับ modal content ทุกประเภท (auth, cart, checkout, forgot password) */
             background-color: var(--card-background);
             padding: 40px;
             border-radius: 20px;
@@ -438,8 +439,9 @@
 
         /* แยกสไตล์สำหรับแต่ละ Modal */
         #signup-form-container,
-        #login-form-container {
-            max-width: 500px; /* จำกัดความกว้างสำหรับฟอร์ม Auth */
+        #login-form-container,
+        #forgot-password-modal-container { /* เพิ่มสำหรับ forgot password */
+            max-width: 500px; /* จำกัดความกว้างสำหรับฟอร์ม Auth และ Forgot Password */
         }
 
         #cart-modal-container {
@@ -525,6 +527,13 @@
             border: 1px solid #ff6666;
             color: #ff6666;
             text-shadow: 0 0 5px #ff6666;
+        }
+
+        .modal-content .form-message.info { /* For informational messages */
+            background-color: rgba(102, 178, 255, 0.15); /* Light blue for info */
+            border: 1px solid #66b2ff;
+            color: #66b2ff;
+            text-shadow: 0 0 5px #66b2ff;
         }
 
         .modal-content button[type="submit"],
@@ -803,7 +812,6 @@
             text-shadow: 0 0 2px var(--secondary-color);
         }
 
-
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .header {
@@ -919,7 +927,18 @@
                 </div>
             </div>
 
-        </main>
+            <div class="product-card" data-id="R005" data-name="สุ่มผักมีเกลือ" data-price="1" data-image="https://placehold.co/400x300/90EE90/333333?text=Random+Salt+Veggie">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/90EE90/333333?text=Random+Salt+Veggie" alt="รูปสินค้า สุ่มผักมีเกลือ" class="product-image">
+                    <div class="product-tag">🧂 สุ่มเกลือ</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">สุ่มผักมีเกลือ</h2>
+                    <div class="product-price">1<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button ripple"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+            </main>
 
         <main id="freefire-codes" class="content-section">
             
@@ -1048,7 +1067,52 @@
                 <div class="form-message" id="login-message"></div>
                 <button type="submit" class="ripple">เข้าสู่ระบบ</button>
                 <div class="toggle-form">
-                    ยังไม่มีบัญชี? <a href="#" onclick="showSignupForm()">สมัครสมาชิกที่นี่</a>
+                    ยังไม่มีบัญชี? <a href="#" onclick="showSignupForm()">สมัครสมาชิกที่นี่</a><br>
+                    <a href="#" onclick="showForgotPasswordForm()">ลืมรหัสผ่าน?</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-content" id="forgot-password-modal-container">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <h2>ลืมรหัสผ่าน</h2>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="forgot-email">อีเมลที่ลงทะเบียน:</label>
+                    <input type="email" id="forgot-email" name="email" placeholder="example@email.com" required>
+                </div>
+                <div class="form-message" id="forgot-password-message"></div>
+                <button type="submit" class="ripple" id="send-otp-button">ส่ง OTP</button>
+                <div class="toggle-form">
+                    <a href="#" onclick="showLoginForm()">กลับไปหน้าเข้าสู่ระบบ</a>
+                </div>
+            </form>
+
+            <form id="verify-otp-form" style="display: none;">
+                <div class="form-group">
+                    <label for="otp-code">รหัส OTP (6 หลัก):</label>
+                    <input type="text" id="otp-code" name="otp" maxlength="6" pattern="\d{6}" title="กรุณากรอก OTP 6 หลักที่เป็นตัวเลข" required>
+                </div>
+                <div class="form-message" id="verify-otp-message"></div>
+                <button type="submit" class="ripple">ยืนยัน OTP</button>
+                <div class="toggle-form">
+                    <a href="#" onclick="showForgotPasswordForm()">ส่ง OTP ใหม่</a>
+                </div>
+            </form>
+
+            <form id="reset-password-form" style="display: none;">
+                <div class="form-group">
+                    <label for="new-password">รหัสผ่านใหม่:</label>
+                    <input type="password" id="new-password" name="new_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-new-password">ยืนยันรหัสผ่านใหม่:</label>
+                    <input type="password" id="confirm-new-password" name="confirm_new_password" required>
+                </div>
+                <div class="form-message" id="reset-password-message"></div>
+                <button type="submit" class="ripple">ตั้งรหัสผ่านใหม่</button>
+                <div class="toggle-form">
+                    <a href="#" onclick="showLoginForm()">เข้าสู่ระบบด้วยรหัสผ่านใหม่</a>
                 </div>
             </form>
         </div>
@@ -1141,6 +1205,10 @@
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
         let cart = JSON.parse(localStorage.getItem('shoppingCart')) || []; // ตะกร้าสินค้า
 
+        // สำหรับระบบลืมรหัสผ่าน (จำลอง)
+        let forgotPasswordEmail = null;
+        let generatedOtp = null;
+
         // --- Utility Functions ---
         function showMessage(elementId, message, type) {
             const messageElement = document.getElementById(elementId);
@@ -1200,7 +1268,7 @@
 
         // --- 2. Dynamic Neon Glow on Hover (Optimized) ---
         // เพิ่ม .cart-modal-content และ .checkout-modal-content ใน neonElements
-        const neonElements = document.querySelectorAll('.header, .game-selection, .product-card, #cart-modal-container, #checkout-modal-container');
+        const neonElements = document.querySelectorAll('.header, .game-selection, .product-card, #cart-modal-container, #checkout-modal-container, #forgot-password-modal-container');
 
         neonElements.forEach(element => {
             element.addEventListener('mouseenter', () => {
@@ -1290,8 +1358,9 @@
         const loginFormContainer = document.getElementById('login-form-container');
         const cartModalContainer = document.getElementById('cart-modal-container');
         const checkoutModalContainer = document.getElementById('checkout-modal-container');
+        const forgotPasswordModalContainer = document.getElementById('forgot-password-modal-container'); // New
 
-        const allModals = [signupFormContainer, loginFormContainer, cartModalContainer, checkoutModalContainer];
+        const allModals = [signupFormContainer, loginFormContainer, cartModalContainer, checkoutModalContainer, forgotPasswordModalContainer];
 
         function openModal(modalElement) {
             // First, quickly hide ALL other modals by removing active class and setting display: none
@@ -1346,6 +1415,22 @@
                 document.getElementById('checkout-message').classList.remove('show', 'success', 'error');
                 document.getElementById('slip-upload-message').textContent = '';
                 document.getElementById('slip-upload-message').classList.remove('show', 'success', 'error');
+                
+                // Reset forgot password forms
+                forgotPasswordForm.reset();
+                verifyOtpForm.reset();
+                resetPasswordForm.reset();
+                document.getElementById('forgot-password-message').textContent = '';
+                document.getElementById('forgot-password-message').classList.remove('show', 'success', 'error', 'info');
+                document.getElementById('verify-otp-message').textContent = '';
+                document.getElementById('verify-otp-message').classList.remove('show', 'success', 'error', 'info');
+                document.getElementById('reset-password-message').textContent = '';
+                document.getElementById('reset-password-message').classList.remove('show', 'success', 'error', 'info');
+                
+                // Show only the initial step of forgot password form
+                document.getElementById('forgot-password-form').style.display = 'block';
+                document.getElementById('verify-otp-form').style.display = 'none';
+                document.getElementById('reset-password-form').style.display = 'none';
 
             }, 300); // Match CSS transition duration
         }
@@ -1552,6 +1637,116 @@
             });
         }
 
+        // --- Forgot Password Logic ---
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const verifyOtpForm = document.getElementById('verify-otp-form');
+        const resetPasswordForm = document.getElementById('reset-password-form');
+        const forgotPasswordMessage = document.getElementById('forgot-password-message');
+        const verifyOtpMessage = document.getElementById('verify-otp-message');
+        const resetPasswordMessage = document.getElementById('reset-password-message');
+
+        function showForgotPasswordForm() {
+            openModal(forgotPasswordModalContainer);
+            // Reset forms and show only the first step
+            forgotPasswordForm.style.display = 'block';
+            verifyOtpForm.style.display = 'none';
+            resetPasswordForm.style.display = 'none';
+            forgotPasswordForm.reset();
+            verifyOtpForm.reset();
+            resetPasswordForm.reset();
+            forgotPasswordMessage.textContent = '';
+            forgotPasswordMessage.classList.remove('show', 'success', 'error', 'info');
+            verifyOtpMessage.textContent = '';
+            verifyOtpMessage.classList.remove('show', 'success', 'error', 'info');
+            resetPasswordMessage.textContent = '';
+            resetPasswordMessage.classList.remove('show', 'success', 'error', 'info');
+            forgotPasswordEmail = null;
+            generatedOtp = null;
+        }
+
+        // Step 1: Send OTP
+        forgotPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value.trim();
+            
+            const userExists = registeredUsers.some(user => user.email === email);
+
+            if (!userExists) {
+                showMessage('forgot-password-message', 'ไม่พบอีเมลนี้ในระบบ โปรดตรวจสอบอีกครั้ง', 'error');
+                return;
+            }
+
+            showMessage('forgot-password-message', 'กำลังส่งรหัส OTP ไปยังอีเมลของคุณ...', 'info');
+
+            // Simulate OTP generation and sending
+            setTimeout(() => {
+                generatedOtp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+                forgotPasswordEmail = email; // Store email for later steps
+                console.log(`[DEBUG] OTP for ${email}: ${generatedOtp}`); // Log OTP for testing
+
+                showMessage('forgot-password-message', 'ส่งรหัส OTP สำเร็จ! โปรดตรวจสอบอีเมลของคุณ', 'success');
+                
+                // Move to OTP verification step
+                forgotPasswordForm.style.display = 'none';
+                verifyOtpForm.style.display = 'block';
+                document.getElementById('otp-code').focus();
+            }, 2000); // Simulate network delay
+        });
+
+        // Step 2: Verify OTP
+        verifyOtpForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const enteredOtp = document.getElementById('otp-code').value.trim();
+
+            if (enteredOtp === generatedOtp) {
+                showMessage('verify-otp-message', 'ยืนยัน OTP สำเร็จ!', 'success');
+                
+                // Move to reset password step
+                verifyOtpForm.style.display = 'none';
+                resetPasswordForm.style.display = 'block';
+                document.getElementById('new-password').focus();
+            } else {
+                showMessage('verify-otp-message', 'รหัส OTP ไม่ถูกต้อง โปรดลองอีกครั้ง', 'error');
+            }
+        });
+
+        // Step 3: Reset Password
+        resetPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const confirmNewPassword = document.getElementById('confirm-new-password').value;
+
+            if (newPassword !== confirmNewPassword) {
+                showMessage('reset-password-message', 'รหัสผ่านใหม่ไม่ตรงกัน โปรดตรวจสอบอีกครั้ง!', 'error');
+                return;
+            }
+
+            if (!forgotPasswordEmail) {
+                showMessage('reset-password-message', 'เกิดข้อผิดพลาด: ไม่พบอีเมลผู้ใช้', 'error');
+                return;
+            }
+
+            // Find user by email and update password
+            const userIndex = registeredUsers.findIndex(user => user.email === forgotPasswordEmail);
+            if (userIndex > -1) {
+                registeredUsers[userIndex].password = newPassword;
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                showMessage('reset-password-message', 'ตั้งรหัสผ่านใหม่สำเร็จ! คุณสามารถเข้าสู่ระบบได้แล้ว', 'success');
+                
+                // Clear temporary data
+                forgotPasswordEmail = null;
+                generatedOtp = null;
+
+                setTimeout(() => {
+                    closeAllModals();
+                    showLoginForm(); // Redirect to login page
+                    showMessage('login-message', 'กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่ของคุณ', 'info');
+                }, 2000);
+            } else {
+                showMessage('reset-password-message', 'เกิดข้อผิดพลาดในการตั้งรหัสผ่าน', 'error');
+            }
+        });
+
         // --- Shopping Cart Functions ---
         const cartItemsList = document.getElementById('cart-items-list');
         const cartTotalDisplay = document.getElementById('cart-total');
@@ -1579,9 +1774,11 @@
                 cart.forEach(item => {
                     const listItem = document.createElement('li');
                     listItem.classList.add('cart-item');
+                    // Check for outcome and display it
+                    const outcomeDisplay = item.outcome ? `<br><small style="color: var(--secondary-color);">${item.outcome}</small>` : '';
                     listItem.innerHTML = `
                         <div class="cart-item-info">
-                            <div class="item-title">${item.name}</div>
+                            <div class="item-title">${item.name} ${outcomeDisplay}</div>
                             <div class="item-price">${item.price} บาท/ชิ้น</div>
                         </div>
                         <div class="cart-item-actions">
@@ -1609,35 +1806,71 @@
             const productName = productCard.dataset.name;
             const productPrice = parseFloat(productCard.dataset.price);
             
-            const existingItem = cart.find(item => item.id === productId);
+            // Special logic for "สุ่มผักมีเกลือ" (ID: R005)
+            if (productId === 'R005') {
+                const randomNumber = Math.random() * 100; // Generates a number between 0 (inclusive) and 100 (exclusive)
+                let outcome = '';
+                let outcomeMessage = '';
 
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
+                if (randomNumber <= 2) { // 2% chance for rare outcome
+                    outcome = '⭐ ได้แรร์ไอเทม! ผักเกลือสุดยอด!';
+                    outcomeMessage = 'ยินดีด้วย! คุณได้แรร์ไอเทมจากสุ่มผักมีเกลือ!';
+                    console.log(`[สุ่มผักมีเกลือ] เลขสุ่ม: ${randomNumber.toFixed(2)} - ได้แรร์ไอเทม!`);
+                } else {
+                    outcome = 'ผักธรรมดา ได้เกลือเพิ่ม';
+                    outcomeMessage = 'เสียใจด้วย คุณได้ผักธรรมดาจากสุ่มผักมีเกลือ';
+                    console.log(`[สุ่มผักมีเกลือ] เลขสุ่ม: ${randomNumber.toFixed(2)} - ได้ผักธรรมดา`);
+                }
+
+                // Add the item to cart with its outcome
                 cart.push({
-                    id: productId,
+                    id: productId + '-' + Date.now(), // Add a unique identifier for each spin
                     name: productName,
                     price: productPrice,
-                    quantity: 1
+                    quantity: 1,
+                    outcome: outcome // Store the outcome
                 });
+                showMessage('login-message', outcomeMessage, outcome.includes('แรร์ไอเทม') ? 'success' : 'info');
+
+            } else {
+                // Existing logic for other items
+                const existingItem = cart.find(item => item.id === productId && !item.outcome); // Find regular items
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: productId,
+                        name: productName,
+                        price: productPrice,
+                        quantity: 1
+                    });
+                }
+                showMessage('login-message', `${productName} ถูกเพิ่มเข้าตะกร้าแล้ว!`, 'success');
             }
-            showMessage('login-message', `${productName} ถูกเพิ่มเข้าตะกร้าแล้ว!`, 'success');
+            
             renderCart(); // Render cart immediately after adding
         }
 
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
+        function removeFromCart(itemId) { // Changed productId to itemId to match unique ID
+            cart = cart.filter(item => item.id !== itemId);
             renderCart();
             showMessage('login-message', 'สินค้านี้ถูกลบออกจากตะกร้าแล้ว', 'error');
         }
 
-        function updateCartQuantity(productId, quantity) {
+        function updateCartQuantity(itemId, quantity) { // Changed productId to itemId
             const newQuantity = parseInt(quantity);
             if (isNaN(newQuantity) || newQuantity < 1) {
                 return; // Prevent invalid input
             }
-            const itemToUpdate = cart.find(item => item.id === productId);
+            const itemToUpdate = cart.find(item => item.id === itemId);
             if (itemToUpdate) {
+                // For 'สุ่มผักมีเกลือ', quantity should always be 1 for each outcome,
+                // so we don't allow changing quantity for items with an outcome
+                if (itemToUpdate.outcome) {
+                    showMessage('login-message', 'ไม่สามารถเปลี่ยนจำนวนสินค้าสุ่มได้', 'error');
+                    renderCart(); // Re-render to revert quantity if changed
+                    return;
+                }
                 itemToUpdate.quantity = newQuantity;
                 renderCart();
             }
@@ -1672,8 +1905,9 @@
                 cart.forEach(item => {
                     const summaryItem = document.createElement('div');
                     summaryItem.classList.add('summary-item');
+                    const outcomeText = item.outcome ? ` (${item.outcome})` : '';
                     summaryItem.innerHTML = `
-                        <span>${item.name} x ${item.quantity}</span>
+                        <span>${item.name}${outcomeText} x ${item.quantity}</span>
                         <span>${(item.price * item.quantity).toFixed(2)} บาท</span>
                     `;
                     checkoutSummaryList.appendChild(summaryItem);
