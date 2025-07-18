@@ -129,7 +129,16 @@
             animation: fadeIn 0.7s ease-out forwards;
             animation-delay: 0.3s;
             border: 1px solid var(--primary-color); /* เพิ่มขอบสีม่วง */
-            transition: box-shadow 0.3s ease, border-color 0.3s ease; /* สำหรับ Dynamic Neon */
+            /* ใช้ transition สำหรับการเปลี่ยนแปลง effect จาก JS แทนการ mousemove */
+            transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.1s ease; 
+        }
+        
+        /* เพิ่ม class สำหรับ neon glow ที่ควบคุมด้วย JS */
+        .header.neon-active,
+        .game-selection.neon-active,
+        .product-card.neon-active {
+            box-shadow: var(--neon-glow-secondary); /* ใช้ secondary เพื่อให้ดูต่างจากปกติ */
+            border-color: var(--secondary-color);
         }
 
         .header .logo {
@@ -192,7 +201,7 @@
             animation: fadeIn 0.7s ease-out forwards;
             animation-delay: 0.6s;
             border: 1px solid var(--primary-color);
-            transition: box-shadow 0.3s ease, border-color 0.3s ease; /* สำหรับ Dynamic Neon */
+            transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.1s ease; /* สำหรับ Dynamic Neon */
         }
 
         .game-selection .game-button {
@@ -229,6 +238,7 @@
         /* --- [ 4 ] ส่วนแสดงเนื้อหา (Content Sections) --- */
         .content-section {
             display: none;
+            /* Animation สำหรับการแสดงผล */
             animation: fadeIn 0.5s ease-out forwards;
         }
 
@@ -245,12 +255,14 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 4px 25px var(--shadow-color);
+            /* ใช้ transform สำหรับ hover เพื่อ Hardware Acceleration */
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             opacity: 0;
             animation: fadeIn 0.5s ease-out forwards;
             border: 1px solid var(--primary-color);
             position: relative; /* สำหรับ Ripple Effect */
             cursor: pointer; /* เพื่อให้รู้ว่าคลิกได้ */
+            will-change: transform, box-shadow; /* บอก Browser ให้เตรียมตัวสำหรับ Property เหล่านี้ */
         }
 
         .product-card:hover {
@@ -270,6 +282,7 @@
             object-fit: cover;
             display: block;
             filter: brightness(0.8) saturate(1.2);
+            will-change: filter; /* บอก Browser ให้เตรียมตัว */
         }
         
         .product-card .product-tag {
@@ -366,6 +379,7 @@
             box-shadow: var(--neon-glow); /* Neon glow */
             transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; /* Smooth transition */
             opacity: 0.9;
+            will-change: transform, opacity; /* บอก Browser ให้เตรียมตัว */
         }
 
         #scrollToTopBtn:hover {
@@ -377,7 +391,10 @@
 
         /* --- Overlay and Form Styles (Signup & Login) --- */
         .overlay {
-            display: none; /* Hidden by default */
+            /* เปลี่ยน display: none; เป็น visibility: hidden; และ opacity: 0; */
+            /* เพื่อให้สามารถทำ transition ได้เมื่อแสดง/ซ่อน */
+            visibility: hidden; 
+            opacity: 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -385,27 +402,17 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
             z-index: 100; /* Above all other content */
+            display: flex; /* ยังคง flex เพื่อจัดตำแหน่ง */
             justify-content: center;
             align-items: center;
-            /* Animation for opening */
-            animation: fadeInOverlay 0.3s ease-out forwards;
-        }
-
-        /* Animation for closing the overlay */
-        .overlay.closing {
-            animation: fadeOutOverlay 0.3s ease-out forwards;
-        }
-
-        @keyframes fadeInOverlay {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            /* เพิ่ม transition เพื่อความลื่นไหล */
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         
-        @keyframes fadeOutOverlay {
-            from { opacity: 1; }
-            to { opacity: 0; }
+        .overlay.active { /* ใช้ active แทนการเปลี่ยน display */
+            visibility: visible;
+            opacity: 1;
         }
-
 
         .auth-form-container { /* ใช้ class เดียวกันสำหรับ Login และ Signup */
             background-color: var(--card-background);
@@ -415,27 +422,18 @@
             width: 90%;
             max-width: 500px;
             position: relative;
-            /* Animation for opening */
-            transform: scale(0.9);
-            animation: scaleIn 0.3s ease-out forwards;
+            transform: scale(0.9); /* ค่าเริ่มต้น */
+            opacity: 0; /* ค่าเริ่มต้น */
+            transition: transform 0.3s ease, opacity 0.3s ease; /* เพิ่ม transition */
             border: 2px solid var(--primary-color);
-        }
-
-        /* Animation for closing the form */
-        .auth-form-container.closing {
-            animation: scaleOut 0.3s ease-in forwards;
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            pointer-events: none; /* ปิดการ interact เมื่อฟอร์มยังไม่ออกมาเต็มที่ */
         }
         
-        @keyframes scaleOut {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(0.9); opacity: 0; }
+        .auth-form-container.active { /* ใช้ active แทนการเปลี่ยน display */
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto; /* เปิดการ interact */
         }
-
 
         .auth-form-container h2 {
             font-size: 2rem;
@@ -818,8 +816,6 @@
 
     <script>
         // --- Global Variables (Simulating Backend Storage) ---
-        // In a real application, these would be managed on a server (database).
-        // For demonstration, we use localStorage to persist data across browser sessions.
         let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 
@@ -827,8 +823,7 @@
         function showMessage(elementId, message, type) {
             const messageElement = document.getElementById(elementId);
             messageElement.textContent = message;
-            messageElement.className = `form-message show ${type}`; // Add type class for styling
-            // Hide message after a few seconds
+            messageElement.className = `form-message show ${type}`;
             setTimeout(() => {
                 messageElement.classList.remove('show');
             }, 5000);
@@ -836,12 +831,15 @@
 
         // --- 1. Show Content Function (Optimized for Animation Delay) ---
         function showContent(contentId) {
-            // Close any open auth forms first
             closeAuthForm(); 
 
             const allContentSections = document.querySelectorAll('.content-section');
             allContentSections.forEach(content => {
-                content.classList.remove('active');
+                // ใช้ opacity และ pointer-events แทน display: none เพื่อ Transition ได้
+                content.classList.remove('active'); 
+                content.style.opacity = 0;
+                content.style.pointerEvents = 'none';
+
                 const cardsToHide = content.querySelectorAll('.product-card');
                 cardsToHide.forEach(card => {
                     card.style.animationDelay = '';
@@ -856,7 +854,10 @@
 
             const selectedContent = document.getElementById(contentId);
             if (selectedContent) {
+                // เปิดใช้งาน content section ด้วย class 'active'
                 selectedContent.classList.add('active');
+                selectedContent.style.opacity = 1;
+                selectedContent.style.pointerEvents = 'auto';
                 
                 const cardsToShow = selectedContent.querySelectorAll('.product-card');
                 const numCols = window.innerWidth > 768 ? 4 : (window.innerWidth > 500 ? 2 : 1); 
@@ -865,52 +866,38 @@
                     card.style.opacity = 0; 
                     const row = Math.floor(index / numCols);
                     const col = index % numCols;
-                    card.style.animationDelay = (0.2 + (row * 0.1) + (col * 0.05)) + 's'; 
+                    // ปรับ animation delay ให้ลื่นขึ้นและใช้ CSS Animation ที่ efficient
+                    card.style.animationDelay = (0.05 * (row + col)) + 's'; 
                 });
             }
 
-            // Check if event.currentTarget exists (it won't if called from DOMContentLoaded)
             if (event && event.currentTarget) {
                 event.currentTarget.classList.add('active');
             }
         }
 
-        // --- 2. Dynamic Neon Glow on Hover ---
+        // --- 2. Dynamic Neon Glow on Hover (Optimized) ---
         const neonElements = document.querySelectorAll('.header, .game-selection, .product-card');
 
         neonElements.forEach(element => {
-            let originalBoxShadow = element.style.boxShadow;
-            let originalBorderColor = element.style.borderColor;
-
-            const isHeaderLogo = element.querySelector('.header .logo');
-            const isHeaderCart = element.querySelector('.header .user-actions .fa-shopping-cart');
-
-            element.addEventListener('mousemove', (e) => {
-                const rect = element.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                let glowColorPrimary = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
-                let glowColorSecondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
-
-                element.style.boxShadow = `
-                    0 0 15px ${glowColorPrimary},
-                    0 0 30px ${glowColorSecondary},
-                    ${x - rect.width / 2}px ${y - rect.height / 2}px 50px rgba(255, 255, 255, 0.1)
-                `;
-                element.style.borderColor = glowColorSecondary; 
-                
+            // ใช้ CSS classes แทนการเปลี่ยน inline style บ่อยๆ
+            element.addEventListener('mouseenter', () => {
+                element.classList.add('neon-active');
+                // เฉพาะโลโก้และตะกร้าที่มีอนิเมชันเฉพาะ
+                const isHeaderLogo = element.querySelector('.header .logo');
+                const isHeaderCart = element.querySelector('.header .user-actions .fa-shopping-cart');
                 if (isHeaderLogo) {
-                    isHeaderLogo.style.textShadow = `0 0 10px ${glowColorSecondary}, 0 0 20px ${glowColorSecondary}`;
+                    isHeaderLogo.style.textShadow = '0 0 10px var(--secondary-color), 0 0 20px var(--secondary-color)';
                 }
                 if (isHeaderCart) {
-                    isHeaderCart.style.filter = `drop-shadow(0 0 10px ${glowColorSecondary})`;
+                    isHeaderCart.style.filter = 'drop-shadow(0 0 10px var(--secondary-color))';
                 }
             });
 
             element.addEventListener('mouseleave', () => {
-                element.style.boxShadow = originalBoxShadow;
-                element.style.borderColor = originalBorderColor;
+                element.classList.remove('neon-active');
+                const isHeaderLogo = element.querySelector('.header .logo');
+                const isHeaderCart = element.querySelector('.header .user-actions .fa-shopping-cart');
                 if (isHeaderLogo) {
                     isHeaderLogo.style.textShadow = 'var(--neon-glow)';
                 }
@@ -921,11 +908,11 @@
         });
 
         // --- 3. Ripple Effect on Click ---
-        // Added .auth-form-container button[type="submit"] to rippleElements
         const rippleElements = document.querySelectorAll('.product-card, .game-button, .buy-button, #signup-link, #login-link, .close-btn, #scrollToTopBtn, .auth-form-container button[type="submit"], .toggle-form a');
 
         rippleElements.forEach(element => {
             element.addEventListener('click', function(e) {
+                // เพิ่ม guard clause เพื่อลดการทำงานที่ไม่จำเป็น
                 if (this.classList.contains('active') && this.classList.contains('game-button')) {
                     return; 
                 }
@@ -952,17 +939,21 @@
             });
         });
 
-        // --- 4. Smooth Scroll to Top Button ---
+        // --- 4. Smooth Scroll to Top Button (Optimized with Throttling) ---
         const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+        let scrollTimeout;
 
         window.onscroll = function() {
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                scrollToTopBtn.style.display = "block";
-                scrollToTopBtn.style.opacity = "0.9";
-            } else {
-                scrollToTopBtn.style.display = "none";
-                scrollToTopBtn.style.opacity = "0";
-            }
+            clearTimeout(scrollTimeout); // Clear previous timeout
+            scrollTimeout = setTimeout(() => { // Set a new timeout
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                    scrollToTopBtn.style.display = "block";
+                    scrollToTopBtn.style.opacity = "0.9";
+                } else {
+                    scrollToTopBtn.style.display = "none";
+                    scrollToTopBtn.style.opacity = "0";
+                }
+            }, 100); // Only run after 100ms of no scrolling (throttle)
         };
 
         function scrollToTop() {
@@ -972,7 +963,7 @@
             });
         }
 
-        // --- 5. Authentication Form Handling (Login & Signup) ---
+        // --- 5. Authentication Form Handling (Login & Signup - Optimized Transitions) ---
         const loginLink = document.getElementById('login-link');
         const signupLink = document.getElementById('signup-link');
         const userActionsNav = document.getElementById('user-actions-nav');
@@ -998,54 +989,64 @@
         });
 
         function openAuthForm() {
-            authOverlay.style.display = 'flex'; 
+            authOverlay.classList.add('active'); // เปิด overlay
             document.querySelector('.container').style.filter = 'blur(5px)'; 
             document.body.style.overflow = 'hidden'; 
-            // Remove closing classes if they were present from a previous close attempt
-            authOverlay.classList.remove('closing');
-            signupFormContainer.classList.remove('closing');
-            loginFormContainer.classList.remove('closing');
         }
 
         function closeAuthForm() {
-            // Apply closing animations
-            authOverlay.classList.add('closing');
-            if (signupFormContainer.style.display === 'block') {
-                signupFormContainer.classList.add('closing');
-            } else if (loginFormContainer.style.display === 'block') {
-                loginFormContainer.classList.add('closing');
+            if (!authOverlay.classList.contains('active')) {
+                return; // ถ้าไม่ได้เปิดอยู่ ก็ไม่ต้องทำอะไร
             }
 
-            // After animation completes, truly hide and reset
+            // Remove active classes to start transition out
+            authOverlay.classList.remove('active');
+            signupFormContainer.classList.remove('active');
+            loginFormContainer.classList.remove('active');
+
+            // Hide and reset elements AFTER transitions complete
             setTimeout(() => {
-                authOverlay.style.display = 'none'; 
+                // Ensure the form containers are actually hidden by display: none to prevent interaction
+                signupFormContainer.style.display = 'none';
+                loginFormContainer.style.display = 'none';
+
                 document.querySelector('.container').style.filter = 'none'; 
                 document.body.style.overflow = ''; 
-                // Clear messages and reset forms when closing
+                
                 signupForm.reset();
                 loginForm.reset();
                 signupMessage.textContent = '';
                 signupMessage.classList.remove('show', 'success', 'error');
                 loginMessage.textContent = '';
                 loginMessage.classList.remove('show', 'success', 'error');
-
-                // Remove closing classes for next open
-                authOverlay.classList.remove('closing');
-                signupFormContainer.classList.remove('closing');
-                loginFormContainer.classList.remove('closing');
-
-            }, 300); // Match this timeout to the animation duration (0.3s)
+            }, 300); // Match this timeout to the CSS transition duration (0.3s)
         }
 
         function showSignupForm() {
+            // ซ่อนฟอร์มอื่นๆ ทันที
             loginFormContainer.style.display = 'none';
+            loginFormContainer.classList.remove('active'); // ตรวจสอบให้แน่ใจว่าไม่มี active class
+
+            // แสดงฟอร์มที่ต้องการ
             signupFormContainer.style.display = 'block';
+            // เพิ่ม active class หลังจาก delay เล็กน้อยเพื่อให้ transition ทำงาน
+            setTimeout(() => {
+                signupFormContainer.classList.add('active');
+            }, 10); // Small delay for CSS transition to apply correctly
             openAuthForm();
         }
 
         function showLoginForm() {
+            // ซ่อนฟอร์มอื่นๆ ทันที
             signupFormContainer.style.display = 'none';
+            signupFormContainer.classList.remove('active'); // ตรวจสอบให้แน่ใจว่าไม่มี active class
+
+            // แสดงฟอร์มที่ต้องการ
             loginFormContainer.style.display = 'block';
+            // เพิ่ม active class หลังจาก delay เล็กน้อยเพื่อให้ transition ทำงาน
+            setTimeout(() => {
+                loginFormContainer.classList.add('active');
+            }, 10); // Small delay for CSS transition to apply correctly
             openAuthForm();
         }
 
@@ -1062,36 +1063,33 @@
                 return;
             }
 
-            // Simulate server check for existing user
             if (registeredUsers.some(user => user.username === username || user.email === email)) {
                 showMessage('signup-message', 'ชื่อผู้ใช้หรืออีเมลนี้มีผู้ใช้งานแล้ว!', 'error');
                 return;
             }
 
             showMessage('signup-message', 'กำลังลงทะเบียน...', 'info');
-            // Simulate API call delay
+            
             setTimeout(() => {
-                const newUser = { username, email, password }; // In real app, password would be hashed
+                const newUser = { username, email, password }; 
                 registeredUsers.push(newUser);
                 localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
                 
                 showMessage('signup-message', 'สมัครสมาชิกสำเร็จ! กำลังเข้าสู่ระบบ...', 'success');
                 
-                // Automatically log in the new user
                 currentUser = { username: newUser.username, email: newUser.email };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 
-                // Update UI first, then close form with animation
                 updateUserUI(); 
                 
                 setTimeout(() => {
                     closeAuthForm();
                     // Show welcome message on main page after form is fully closed
-                    setTimeout(() => { // Small delay to ensure message appears after form disappears
+                    setTimeout(() => { 
                         showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับสู่ VAkung Shop!`, 'success'); 
                     }, 100); 
-                }, 1500); // Delay before closing form with animation
-            }, 2000); // Simulate network latency
+                }, 1500); 
+            }, 2000); 
         });
 
         // --- Login Logic (Simulated Backend) ---
@@ -1102,7 +1100,6 @@
 
             showMessage('login-message', 'กำลังเข้าสู่ระบบ...', 'info');
 
-            // Simulate API call delay
             setTimeout(() => {
                 const userFound = registeredUsers.find(user => 
                     (user.username === usernameOrEmail || user.email === usernameOrEmail) && user.password === password
@@ -1114,41 +1111,38 @@
                     
                     showMessage('login-message', 'เข้าสู่ระบบสำเร็จ!', 'success');
                     
-                    // Update UI first, then close form with animation
                     updateUserUI(); 
                     setTimeout(() => {
                         closeAuthForm();
-                        // Show welcome message on main page after form is fully closed
-                        setTimeout(() => { // Small delay to ensure message appears after form disappears
+                        setTimeout(() => { 
                              showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับกลับมา!`, 'success'); 
                         }, 100);
-                    }, 1000); // Delay before closing form with animation
+                    }, 1000); 
                 } else {
                     showMessage('login-message', 'ชื่อผู้ใช้/อีเมล หรือรหัสผ่านไม่ถูกต้อง!', 'error');
                 }
-            }, 1500); // Simulate network latency
+            }, 1500); 
         });
 
         // --- Logout Logic ---
         function logoutUser() {
             currentUser = null;
-            localStorage.removeItem('currentUser'); // Clear user from local storage
-            updateUserUI(); // Update UI to show login/signup links again
-            showMessage('login-message', 'ออกจากระบบสำเร็จ!', 'success'); // Show logout message
+            localStorage.removeItem('currentUser'); 
+            updateUserUI(); 
+            showMessage('login-message', 'ออกจากระบบสำเร็จ!', 'success'); 
         }
 
         // --- Update User Interface based on Login Status ---
         function updateUserUI() {
-            userActionsNav.innerHTML = ''; // Clear current links
+            userActionsNav.innerHTML = ''; 
 
             const cartLink = document.createElement('a');
             cartLink.href = '#';
             cartLink.innerHTML = '<i class="fas fa-shopping-cart"></i> ตะกร้า';
-            cartLink.classList.add('ripple'); // Add ripple class
+            cartLink.classList.add('ripple'); 
             userActionsNav.appendChild(cartLink);
 
             if (currentUser) {
-                // If logged in, show welcome message and logout link
                 const welcomeSpan = document.createElement('span');
                 welcomeSpan.className = 'welcome-message';
                 welcomeSpan.textContent = `สวัสดี, ${currentUser.username}!`;
@@ -1158,19 +1152,18 @@
                 logoutLink.href = '#';
                 logoutLink.id = 'logout-link';
                 logoutLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> ออกจากระบบ';
-                logoutLink.classList.add('ripple'); // Add ripple class
+                logoutLink.classList.add('ripple'); 
                 logoutLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     logoutUser();
                 });
                 userActionsNav.appendChild(logoutLink);
             } else {
-                // If not logged in, show login and signup links
                 const loginLinkElement = document.createElement('a');
                 loginLinkElement.href = '#';
                 loginLinkElement.id = 'login-link';
                 loginLinkElement.innerHTML = '<i class="fas fa-user-circle"></i> เข้าสู่ระบบ';
-                loginLinkElement.classList.add('ripple'); // Add ripple class
+                loginLinkElement.classList.add('ripple'); 
                 loginLinkElement.addEventListener('click', (e) => {
                     e.preventDefault();
                     showLoginForm();
@@ -1181,24 +1174,21 @@
                 signupLinkElement.href = '#';
                 signupLinkElement.id = 'signup-link';
                 signupLinkElement.innerHTML = '<i class="fas fa-user-plus"></i> สมัครสมาชิก';
-                signupLinkElement.classList.add('ripple'); // Add ripple class
+                signupLinkElement.classList.add('ripple'); 
                 signupLinkElement.addEventListener('click', (e) => {
                     e.preventDefault();
                     showSignupForm();
                 });
                 userActionsNav.appendChild(signupLinkElement);
             }
-            // Re-apply ripple listeners to newly created elements
             addRippleEffectToNewElements();
         }
 
         function addRippleEffectToNewElements() {
-            // Re-select all elements that should have ripple effect after UI update
             const newlyCreatedRippleElements = document.querySelectorAll('.auth-form-container button[type="submit"], .toggle-form a, #login-link, #signup-link, #logout-link, #scrollToTopBtn');
             
             newlyCreatedRippleElements.forEach(element => {
-                // Ensure event listener is added only once
-                if (!element._hasRippleListener) { // Check for a custom flag
+                if (!element._hasRippleListener) { 
                     element.addEventListener('click', function(e) {
                         if (this.classList.contains('active') && this.classList.contains('game-button')) {
                             return; 
@@ -1224,7 +1214,7 @@
                             ripple.remove();
                         });
                     });
-                    element._hasRippleListener = true; // Set flag
+                    element._hasRippleListener = true; 
                 }
             });
         }
@@ -1239,11 +1229,11 @@
                 card.style.opacity = 0;
                 const row = Math.floor(index / numCols);
                 const col = index % numCols;
-                card.style.animationDelay = (0.6 + (row * 0.1) + (col * 0.05)) + 's'; 
+                card.style.animationDelay = (0.6 + (0.05 * (row + col))) + 's'; /* ปรับ delay ให้ลื่นขึ้น */
             });
 
-            updateUserUI(); // Update UI on page load based on current user status
-            addRippleEffectToNewElements(); // Ensure initial ripple effects are set
+            updateUserUI(); 
+            addRippleEffectToNewElements(); 
         });
     </script>
 
