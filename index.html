@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร้านขายรหัสเกมและบริการฟาร์ม - VAkung Shop (Neon Vibe)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        /* --- [ 1 ] การตั้งค่าโดยรวม --- */
+        :root {
+            --primary-color: #cc66ff; /* สีม่วง Neon หลัก */
+            --secondary-color: #66ccff; /* สีฟ้า Neon */
+            --background-color: #1e0038; /* สีพื้นหลังม่วงเข้ม */
+            --card-background: #330066; /* สีพื้นหลังการ์ดม่วงเข้ม */
+            --text-color: #f0f8ff; /* สีข้อความขาวสว่าง */
+            --shadow-color: rgba(204, 102, 255, 0.25); /* เงาสีม่วงอ่อนๆ */
+            --button-active-color: #9933ff; /* สีปุ่ม Active ม่วงเข้มขึ้น */
+            --neon-glow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 30px var(--primary-color);
+            --neon-glow-secondary: 0 0 10px var(--secondary-color), 0 0 20px var(--secondary-color), 0 0 30px var(--secondary-color);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Mitr', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            animation: fadeIn 1s ease-in-out forwards; 
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Keyframes สำหรับ Animation --- */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes subtlePulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+                text-shadow: var(--neon-glow);
+            }
+            50% {
+                opacity: 0.95;
+                transform: scale(1.01);
+                text-shadow: 0 0 5px var(--primary-color);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                text-shadow: var(--neon-glow);
+            }
+        }
+
+        @keyframes gentleFloat {
+            0% {
+                transform: translateY(0);
+                filter: drop-shadow(var(--neon-glow));
+            }
+            50% {
+                transform: translateY(-5px);
+                filter: drop-shadow(0 0 5px var(--primary-color));
+            }
+            100% {
+                transform: translateY(0);
+                filter: drop-shadow(var(--neon-glow));
+            }
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0); /* Force GPU acceleration */
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4); /* White ripple */
+            animation: ripple-animation 0.6s linear forwards;
+            pointer-events: none; /* Make sure it doesn't interfere with clicks */
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        @keyframes ripple-animation {
+            from {
+                transform: scale(0);
+                opacity: 1;
+            }
+            to {
+                transform: scale(4); /* Max scale for the ripple */
+                opacity: 0;
+            }
+        }
+
+        /* --- [ 2 ] ส่วนหัวของร้าน (Header) --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: var(--card-background);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeIn 0.7s ease-out forwards;
+            animation-delay: 0.3s;
+            border: 1px solid var(--primary-color); /* เพิ่มขอบสีม่วง */
+            transition: box-shadow 0.3s ease, border-color 0.3s ease; /* สำหรับ Dynamic Neon */
+        }
+
+        .header .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            animation: subtlePulse 2s ease-in-out infinite;
+            text-shadow: var(--neon-glow); /* เพิ่มเงา Neon ให้โลโก้ */
+            transition: text-shadow 0.3s ease; /* สำหรับ Dynamic Neon */
+        }
+
+        .header .user-actions {
+            display: flex; /* ทำให้ลิงก์อยู่ติดกัน */
+            align-items: center;
+        }
+
+        .header .user-actions a,
+        .header .user-actions span { /* สำหรับ "สวัสดี, [ชื่อผู้ใช้]" */
+            font-size: 1.2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 20px;
+            transition: color 0.3s;
+            cursor: pointer; /* เพิ่ม cursor pointer */
+            white-space: nowrap; /* ป้องกันการขึ้นบรรทัดใหม่ */
+        }
+
+        .header .user-actions a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+        
+        /* สไตล์สำหรับข้อความ "สวัสดี, [ชื่อผู้ใช้]" */
+        .header .user-actions .welcome-message {
+            color: var(--secondary-color); /* สีฟ้า Neon */
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--secondary-color);
+            cursor: default; /* ไม่ใช่ลิงก์ */
+        }
+
+        .header .user-actions a .fa-shopping-cart { 
+            animation: gentleFloat 3s ease-in-out infinite;
+            display: inline-block;
+            filter: drop-shadow(var(--neon-glow)); /* เพิ่มเงา Neon ให้ไอคอน */
+            transition: filter 0.3s ease; /* สำหรับ Dynamic Neon */
+        }
+        
+        /* --- [ 3 ] ส่วนเลือกเกม (Game Selection Tabs) --- */
+        .game-selection {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            opacity: 0;
+            animation: fadeIn 0.7s ease-out forwards;
+            animation-delay: 0.6s;
+            border: 1px solid var(--primary-color);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease; /* สำหรับ Dynamic Neon */
+        }
+
+        .game-selection .game-button {
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            font-weight: 500;
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            background-color: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, text-shadow 0.3s ease;
+            box-shadow: inset 0 0 5px var(--primary-color);
+            white-space: nowrap;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .game-selection .game-button:hover {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            transform: translateY(-2px);
+            box-shadow: var(--neon-glow);
+        }
+
+        .game-selection .game-button.active {
+            background-color: var(--button-active-color);
+            color: var(--background-color);
+            box-shadow: var(--neon-glow);
+            transform: translateY(-4px);
+            border-color: var(--button-active-color);
+            text-shadow: none; /* ไม่ต้องมีเงาข้อความเมื่อ active */
+        }
+
+        /* --- [ 4 ] ส่วนแสดงเนื้อหา (Content Sections) --- */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .content-section.active {
+            display: grid;
+            animation-delay: 0s !important;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        /* --- [ 5 ] การ์ดสินค้า/บริการแต่ละชิ้น (Product/Service Card) --- */
+        .product-card {
+            background-color: var(--card-background);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 25px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            border: 1px solid var(--primary-color);
+            position: relative; /* สำหรับ Ripple Effect */
+            cursor: pointer; /* เพื่อให้รู้ว่าคลิกได้ */
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--neon-glow);
+            border-color: var(--secondary-color);
+        }
+
+        .product-card .image-container {
+            position: relative;
+            border-bottom: 1px solid var(--primary-color);
+        }
+        
+        .product-card .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.8) saturate(1.2);
+        }
+        
+        .product-card .product-tag {
+            position: absolute;
+            top: 15px;
+            left: -5px;
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            padding: 5px 15px;
+            font-weight: 500;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            animation: subtlePulse 2.5s ease-in-out infinite;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .product-card .info-container {
+            padding: 20px;
+        }
+        
+        .product-card .product-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 0 3px var(--primary-color);
+        }
+        
+        .product-card .product-price {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px var(--secondary-color);
+        }
+        
+        .product-card .product-price .currency {
+            font-size: 1.2rem;
+            margin-left: 5px;
+            color: var(--text-color);
+            text-shadow: none;
+        }
+        
+        .product-card .buy-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            color: var(--text-color);
+            text-align: center;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            border: 2px solid var(--secondary-color);
+            cursor: pointer;
+            font-family: 'Mitr', sans-serif;
+            text-shadow: 0 0 3px var(--secondary-color);
+            box-shadow: inset 0 0 5px var(--secondary-color);
+            position: relative; /* สำหรับ Ripple Effect */
+            overflow: hidden; /* สำหรับ Ripple Effect */
+            z-index: 1; /* ให้ ripple อยู่บนปุ่ม */
+        }
+        
+        .product-card .buy-button i {
+            margin-right: 8px;
+        }
+
+        .product-card .buy-button:hover {
+            background-color: var(--secondary-color);
+            color: var(--background-color);
+            box-shadow: var(--neon-glow-secondary); /* เปลี่ยนเป็นสีฟ้าเมื่อ hover */
+        }
+
+        /* --- Scroll to Top Button --- */
+        #scrollToTopBtn {
+            display: none; /* Hidden by default */
+            position: fixed; /* Fixed/sticky position */
+            bottom: 30px; /* Place the button at the bottom of the page */
+            right: 30px; /* Place the button 30px from the right */
+            z-index: 99; /* Make sure it does not overlap */
+            border: none; /* Remove borders */
+            outline: none; /* Remove outline */
+            background-color: var(--primary-color); /* Set a background color */
+            color: var(--background-color); /* Text color */
+            cursor: pointer; /* Add a mouse pointer on hover */
+            padding: 15px; /* Some padding */
+            border-radius: 50%; /* Rounded corners */
+            font-size: 1.5rem; /* Increase font size */
+            box-shadow: var(--neon-glow); /* Neon glow */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; /* Smooth transition */
+            opacity: 0.9;
+        }
+
+        #scrollToTopBtn:hover {
+            background-color: var(--secondary-color); /* Darker background on hover */
+            box-shadow: var(--neon-glow-secondary);
+            transform: translateY(-3px);
+            opacity: 1;
+        }
+
+        /* --- Overlay and Form Styles (Signup & Login) --- */
+        .overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            z-index: 100; /* Above all other content */
+            justify-content: center;
+            align-items: center;
+            animation: fadeInOverlay 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .auth-form-container { /* ใช้ class เดียวกันสำหรับ Login และ Signup */
+            background-color: var(--card-background);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--neon-glow);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: scale(0.9);
+            animation: scaleIn 0.3s ease-out forwards;
+            border: 2px solid var(--primary-color);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .auth-form-container h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: var(--neon-glow);
+        }
+
+        .auth-form-container .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .auth-form-container label {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            text-shadow: 0 0 3px var(--primary-color);
+        }
+
+        .auth-form-container input[type="text"],
+        .auth-form-container input[type="email"],
+        .auth-form-container input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: inset 0 0 5px var(--secondary-color);
+        }
+
+        .auth-form-container input[type="text"]:focus,
+        .auth-form-container input[type="email"]:focus,
+        .auth-form-container input[type="password"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+        
+        .auth-form-container .form-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: var(--text-color); /* Default color */
+        }
+
+        .auth-form-container .form-message.show {
+            opacity: 1;
+        }
+
+        .auth-form-container .form-message.success {
+            background-color: rgba(102, 255, 102, 0.15); /* Light green for success */
+            border: 1px solid #66ff66;
+            color: #66ff66;
+            text-shadow: 0 0 5px #66ff66;
+        }
+
+        .auth-form-container .form-message.error {
+            background-color: rgba(255, 102, 102, 0.15); /* Light red for error */
+            border: 1px solid #ff6666;
+            color: #ff6666;
+            text-shadow: 0 0 5px #ff6666;
+        }
+
+        .auth-form-container button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+            box-shadow: var(--neon-glow);
+            text-shadow: none; /* No text shadow on submit button */
+            margin-top: 25px; /* เพิ่มระยะห่างด้านบน */
+        }
+
+        .auth-form-container button[type="submit"]:hover {
+            background-color: var(--secondary-color);
+            box-shadow: var(--neon-glow-secondary);
+            transform: translateY(-2px);
+        }
+
+        .auth-form-container .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            text-shadow: 0 0 5px var(--text-color);
+        }
+
+        .auth-form-container .close-btn:hover {
+            color: var(--primary-color);
+            text-shadow: var(--neon-glow);
+        }
+        
+        /* สลับฟอร์ม */
+        .auth-form-container .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+
+        .auth-form-container .toggle-form a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: text-shadow 0.3s ease;
+            text-shadow: 0 0 3px var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .auth-form-container .toggle-form a:hover {
+            text-shadow: var(--neon-glow-secondary);
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                padding: 15px;
+            }
+            .header .logo {
+                margin-bottom: 15px;
+            }
+            .header .user-actions {
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+            }
+            .header .user-actions a, .header .user-actions span {
+                margin: 0 8px; /* ปรับระยะห่าง */
+                font-size: 1rem;
+            }
+            .game-selection {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .game-selection .game-button {
+                width: 100%;
+            }
+            .content-section {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            #scrollToTopBtn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px;
+                font-size: 1.2rem;
+            }
+            .auth-form-container {
+                padding: 25px;
+                width: 95%;
+            }
+            .auth-form-container h2 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header" id="main-header">
+            <div class="logo">VAkung Shop</div>
+            <nav class="user-actions" id="user-actions-nav">
+                <a href="#"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+                <a href="#" id="login-link"><i class="fas fa-user-circle"></i> เข้าสู่ระบบ</a>
+                <a href="#" id="signup-link"><i class="fas fa-user-plus"></i> สมัครสมาชิก</a>
+                </nav>
+        </header>
+
+        <div class="game-selection" id="game-selection-bar">
+            <button class="game-button active" onclick="showContent('roblox-content')">Roblox</button>
+            <button class="game-button" onclick="showContent('freefire-codes')">Free Fire</button>
+            <button class="game-button" onclick="showContent('freefire-farm')">รับฟาร์มรหัส Free Fire</button>
+        </div>
+
+        <main id="roblox-content" class="content-section active">
+            
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/FFC0CB/333333?text=Grow+a+Garden+Roblox" alt="รูปสินค้า รหัสเกม Grow a Garden Roblox" class="product-image">
+                    <div class="product-tag">🌳 สวนสุดปัง</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">รหัส Grow a Garden - ไอเทมลับ</h2>
+                    <div class="product-price">49<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/A2D2FF/333333?text=Roblox+Gift+Card" alt="รูปสินค้า Roblox Gift Card" class="product-image">
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">บัตรเติม Robux 200 R$</h2>
+                    <div class="product-price">349<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/FFD9A2/333333?text=Roblox+Outfit+Code" alt="รูปสินค้า รหัสชุดแฟชั่น Roblox" class="product-image">
+                    <div class="product-tag">👗 แฟชั่น</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">รหัสชุดแฟชั่นสุด Exclusive</h2>
+                    <div class="product-price">99<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/CDB4DB/333333?text=Roblox+Gamepass" alt="รูปสินค้า Gamepass Roblox" class="product-image">
+                    <div class="product-tag">🚀 แรงค์อัพ</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">Gamepass ปลดล็อคโหมดเทพ</h2>
+                    <div class="product-price">129<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+
+        </main>
+
+        <main id="freefire-codes" class="content-section">
+            
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/f08080/333333?text=Free+Fire+Code+1" alt="รูปสินค้า รหัส Free Fire ลับ" class="product-image">
+                    <div class="product-tag">🔫 สกินปืน</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">รหัส Free Fire: สกินปืนหายาก</h2>
+                    <div class="product-price">69<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/98fb98/333333?text=Free+Fire+Diamond" alt="รูปสินค้า เติม Diamond Free Fire" class="product-image">
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">เติม Diamond Free Fire 1000</h2>
+                    <div class="product-price">299<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/add8e6/333333?text=Free+Fire+Bundle" alt="รูปสินค้า รหัส Bundle Free Fire" class="product-image">
+                    <div class="product-tag">👕 แรร์ไอเทม</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">รหัส Free Fire: ชุด Bundle Limited</h2>
+                    <div class="product-price">199<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-plus-circle"></i> เพิ่มลงตะกร้า</button>
+                </div>
+            </div>
+
+        </main>
+
+        <main id="freefire-farm" class="content-section">
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/87CEEB/333333?text=รับฟาร์ม+แรงค์" alt="รูปบริการรับฟาร์มแรงค์ Free Fire" class="product-image">
+                    <div class="product-tag">🏆 แรงค์เทพ</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">บริการฟาร์มแรงค์ Free Fire</h2>
+                    <div class="product-price">เริ่มต้น 99<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/FFD700/333333?text=รับฟาร์ม+เหรียญ" alt="รูปบริการรับฟาร์มเหรียญ Free Fire" class="product-image">
+                    <div class="product-tag">💰 เหรียญทอง</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">บริการฟาร์มเหรียญทอง Free Fire</h2>
+                    <div class="product-price">เริ่มต้น 50<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/400x300/FFB6C1/333333?text=รับฟาร์ม+อีเวนต์" alt="รูปบริการรับฟาร์มอีเวนต์ Free Fire" class="product-image">
+                    <div class="product-tag">🗓️ อีเวนต์</div>
+                </div>
+                <div class="info-container">
+                    <h2 class="product-title">บริการฟาร์มอีเวนต์ Free Fire</h2>
+                    <div class="product-price">เริ่มต้น 75<span class="currency">บาท</span></div>
+                    <button type="button" class="buy-button"><i class="fas fa-hand-point-right"></i> สอบถามราคา</button>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <button onclick="scrollToTop()" id="scrollToTopBtn" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="overlay" id="auth-overlay">
+        <div class="auth-form-container" id="signup-form-container">
+            <span class="close-btn" onclick="closeAuthForm()">&times;</span>
+            <h2>สมัครสมาชิก VAkung Shop</h2>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-username">ชื่อผู้ใช้:</label>
+                    <input type="text" id="signup-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">อีเมล:</label>
+                    <input type="email" id="signup-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">รหัสผ่าน:</label>
+                    <input type="password" id="signup-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password">ยืนยันรหัสผ่าน:</label>
+                    <input type="password" id="signup-confirm-password" name="confirm-password" required>
+                </div>
+                <div class="form-message" id="signup-message"></div>
+                <button type="submit" class="ripple">สมัครสมาชิก</button>
+                <div class="toggle-form">
+                    มีบัญชีอยู่แล้ว? <a href="#" onclick="showLoginForm()">เข้าสู่ระบบที่นี่</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="auth-form-container" id="login-form-container" style="display: none;">
+            <span class="close-btn" onclick="closeAuthForm()">&times;</span>
+            <h2>เข้าสู่ระบบ VAkung Shop</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username-email">ชื่อผู้ใช้หรืออีเมล:</label>
+                    <input type="text" id="login-username-email" name="username_email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">รหัสผ่าน:</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <div class="form-message" id="login-message"></div>
+                <button type="submit" class="ripple">เข้าสู่ระบบ</button>
+                <div class="toggle-form">
+                    ยังไม่มีบัญชี? <a href="#" onclick="showSignupForm()">สมัครสมาชิกที่นี่</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Global Variables (Simulating Backend Storage) ---
+        // In a real application, these would be managed on a server (database).
+        // For demonstration, we use localStorage to persist data across browser sessions.
+        let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+        // --- Utility Functions ---
+        function showMessage(elementId, message, type) {
+            const messageElement = document.getElementById(elementId);
+            messageElement.textContent = message;
+            messageElement.className = `form-message show ${type}`; // Add type class for styling
+            // Hide message after a few seconds
+            setTimeout(() => {
+                messageElement.classList.remove('show');
+            }, 5000);
+        }
+
+        // --- 1. Show Content Function (Optimized for Animation Delay) ---
+        function showContent(contentId) {
+            // Close any open auth forms first
+            closeAuthForm(); 
+
+            const allContentSections = document.querySelectorAll('.content-section');
+            allContentSections.forEach(content => {
+                content.classList.remove('active');
+                const cardsToHide = content.querySelectorAll('.product-card');
+                cardsToHide.forEach(card => {
+                    card.style.animationDelay = '';
+                    card.style.opacity = 0;
+                });
+            });
+
+            const allButtons = document.querySelectorAll('.game-button');
+            allButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            const selectedContent = document.getElementById(contentId);
+            if (selectedContent) {
+                selectedContent.classList.add('active');
+                
+                const cardsToShow = selectedContent.querySelectorAll('.product-card');
+                const numCols = window.innerWidth > 768 ? 4 : (window.innerWidth > 500 ? 2 : 1); 
+                
+                cardsToShow.forEach((card, index) => {
+                    card.style.opacity = 0; 
+                    const row = Math.floor(index / numCols);
+                    const col = index % numCols;
+                    card.style.animationDelay = (0.2 + (row * 0.1) + (col * 0.05)) + 's'; 
+                });
+            }
+
+            // Check if event.currentTarget exists (it won't if called from DOMContentLoaded)
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+
+        // --- 2. Dynamic Neon Glow on Hover ---
+        const neonElements = document.querySelectorAll('.header, .game-selection, .product-card');
+
+        neonElements.forEach(element => {
+            let originalBoxShadow = element.style.boxShadow;
+            let originalBorderColor = element.style.borderColor;
+
+            const isHeaderLogo = element.querySelector('.header .logo');
+            const isHeaderCart = element.querySelector('.header .user-actions .fa-shopping-cart');
+
+            element.addEventListener('mousemove', (e) => {
+                const rect = element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                let glowColorPrimary = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+                let glowColorSecondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
+
+                element.style.boxShadow = `
+                    0 0 15px ${glowColorPrimary},
+                    0 0 30px ${glowColorSecondary},
+                    ${x - rect.width / 2}px ${y - rect.height / 2}px 50px rgba(255, 255, 255, 0.1)
+                `;
+                element.style.borderColor = glowColorSecondary; 
+                
+                if (isHeaderLogo) {
+                    isHeaderLogo.style.textShadow = `0 0 10px ${glowColorSecondary}, 0 0 20px ${glowColorSecondary}`;
+                }
+                if (isHeaderCart) {
+                    isHeaderCart.style.filter = `drop-shadow(0 0 10px ${glowColorSecondary})`;
+                }
+            });
+
+            element.addEventListener('mouseleave', () => {
+                element.style.boxShadow = originalBoxShadow;
+                element.style.borderColor = originalBorderColor;
+                if (isHeaderLogo) {
+                    isHeaderLogo.style.textShadow = 'var(--neon-glow)';
+                }
+                if (isHeaderCart) {
+                    isHeaderCart.style.filter = 'drop-shadow(var(--neon-glow))';
+                }
+            });
+        });
+
+        // --- 3. Ripple Effect on Click ---
+        // Added .auth-form-container button[type="submit"] to rippleElements
+        const rippleElements = document.querySelectorAll('.product-card, .game-button, .buy-button, #signup-link, #login-link, .close-btn, #scrollToTopBtn, .auth-form-container button[type="submit"], .toggle-form a');
+
+        rippleElements.forEach(element => {
+            element.addEventListener('click', function(e) {
+                if (this.classList.contains('active') && this.classList.contains('game-button')) {
+                    return; 
+                }
+                if (e.target.tagName === 'I' && (this.id === 'scrollToTopBtn' || this.classList.contains('close-btn'))) {
+                     return;
+                }
+
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple-effect');
+
+                const size = Math.max(this.offsetWidth, this.offsetHeight);
+                const x = e.clientX - this.getBoundingClientRect().left - size / 2;
+                const y = e.clientY - this.getBoundingClientRect().top - size / 2;
+
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+
+                this.appendChild(ripple);
+
+                ripple.addEventListener('animationend', () => {
+                    ripple.remove();
+                });
+            });
+        });
+
+        // --- 4. Smooth Scroll to Top Button ---
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollToTopBtn.style.display = "block";
+                scrollToTopBtn.style.opacity = "0.9";
+            } else {
+                scrollToTopBtn.style.display = "none";
+                scrollToTopBtn.style.opacity = "0";
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' 
+            });
+        }
+
+        // --- 5. Authentication Form Handling (Login & Signup) ---
+        const loginLink = document.getElementById('login-link');
+        const signupLink = document.getElementById('signup-link');
+        const userActionsNav = document.getElementById('user-actions-nav');
+
+        const authOverlay = document.getElementById('auth-overlay');
+        const signupFormContainer = document.getElementById('signup-form-container');
+        const loginFormContainer = document.getElementById('login-form-container');
+
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+
+        const signupMessage = document.getElementById('signup-message');
+        const loginMessage = document.getElementById('login-message');
+
+        signupLink.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            showSignupForm();
+        });
+
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginForm();
+        });
+
+        function openAuthForm() {
+            authOverlay.style.display = 'flex'; 
+            document.querySelector('.container').style.filter = 'blur(5px)'; 
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeAuthForm() {
+            authOverlay.style.display = 'none'; 
+            document.querySelector('.container').style.filter = 'none'; 
+            document.body.style.overflow = ''; 
+            // Clear messages and reset forms when closing
+            signupForm.reset();
+            loginForm.reset();
+            signupMessage.textContent = '';
+            signupMessage.classList.remove('show', 'success', 'error');
+            loginMessage.textContent = '';
+            loginMessage.classList.remove('show', 'success', 'error');
+        }
+
+        function showSignupForm() {
+            loginFormContainer.style.display = 'none';
+            signupFormContainer.style.display = 'block';
+            openAuthForm();
+        }
+
+        function showLoginForm() {
+            signupFormContainer.style.display = 'none';
+            loginFormContainer.style.display = 'block';
+            openAuthForm();
+        }
+
+        // --- Signup Logic (Simulated Backend) ---
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signup-username').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showMessage('signup-message', 'รหัสผ่านไม่ตรงกัน โปรดตรวจสอบอีกครั้ง!', 'error');
+                return;
+            }
+
+            // Simulate server check for existing user
+            if (registeredUsers.some(user => user.username === username || user.email === email)) {
+                showMessage('signup-message', 'ชื่อผู้ใช้หรืออีเมลนี้มีผู้ใช้งานแล้ว!', 'error');
+                return;
+            }
+
+            showMessage('signup-message', 'กำลังลงทะเบียน...', 'info');
+            // Simulate API call delay
+            setTimeout(() => {
+                const newUser = { username, email, password }; // In real app, password would be hashed
+                registeredUsers.push(newUser);
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                
+                showMessage('signup-message', 'สมัครสมาชิกสำเร็จ! กำลังเข้าสู่ระบบ...', 'success');
+                
+                // Automatically log in the new user
+                currentUser = { username: newUser.username, email: newUser.email };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUserUI(); // Update UI immediately
+                
+                setTimeout(() => {
+                    closeAuthForm();
+                    showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับสู่ VAkung Shop!`, 'success'); // Show welcome on main page
+                }, 1500); // Delay before closing form and showing welcome
+            }, 2000); // Simulate network latency
+        });
+
+        // --- Login Logic (Simulated Backend) ---
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const usernameOrEmail = document.getElementById('login-username-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            showMessage('login-message', 'กำลังเข้าสู่ระบบ...', 'info');
+
+            // Simulate API call delay
+            setTimeout(() => {
+                const userFound = registeredUsers.find(user => 
+                    (user.username === usernameOrEmail || user.email === usernameOrEmail) && user.password === password
+                );
+
+                if (userFound) {
+                    currentUser = { username: userFound.username, email: userFound.email };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    showMessage('login-message', 'เข้าสู่ระบบสำเร็จ!', 'success');
+                    
+                    setTimeout(() => {
+                        closeAuthForm();
+                        updateUserUI(); // Update UI after successful login
+                        showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับกลับมา!`, 'success'); // Show welcome on main page
+                    }, 1000); // Delay before closing form and updating UI
+                } else {
+                    showMessage('login-message', 'ชื่อผู้ใช้/อีเมล หรือรหัสผ่านไม่ถูกต้อง!', 'error');
+                }
+            }, 1500); // Simulate network latency
+        });
+
+        // --- Logout Logic ---
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('currentUser'); // Clear user from local storage
+            updateUserUI(); // Update UI to show login/signup links again
+            showMessage('login-message', 'ออกจากระบบสำเร็จ!', 'success'); // Show logout message
+        }
+
+        // --- Update User Interface based on Login Status ---
+        function updateUserUI() {
+            userActionsNav.innerHTML = ''; // Clear current links
+
+            const cartLink = document.createElement('a');
+            cartLink.href = '#';
+            cartLink.innerHTML = '<i class="fas fa-shopping-cart"></i> ตะกร้า';
+            cartLink.classList.add('ripple'); // Add ripple class
+            userActionsNav.appendChild(cartLink);
+
+            if (currentUser) {
+                // If logged in, show welcome message and logout link
+                const welcomeSpan = document.createElement('span');
+                welcomeSpan.className = 'welcome-message';
+                welcomeSpan.textContent = `สวัสดี, ${currentUser.username}!`;
+                userActionsNav.appendChild(welcomeSpan);
+
+                const logoutLink = document.createElement('a');
+                logoutLink.href = '#';
+                logoutLink.id = 'logout-link';
+                logoutLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> ออกจากระบบ';
+                logoutLink.classList.add('ripple'); // Add ripple class
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logoutUser();
+                });
+                userActionsNav.appendChild(logoutLink);
+            } else {
+                // If not logged in, show login and signup links
+                const loginLinkElement = document.createElement('a');
+                loginLinkElement.href = '#';
+                loginLinkElement.id = 'login-link';
+                loginLinkElement.innerHTML = '<i class="fas fa-user-circle"></i> เข้าสู่ระบบ';
+                loginLinkElement.classList.add('ripple'); // Add ripple class
+                loginLinkElement.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showLoginForm();
+                });
+                userActionsNav.appendChild(loginLinkElement);
+
+                const signupLinkElement = document.createElement('a');
+                signupLinkElement.href = '#';
+                signupLinkElement.id = 'signup-link';
+                signupLinkElement.innerHTML = '<i class="fas fa-user-plus"></i> สมัครสมาชิก';
+                signupLinkElement.classList.add('ripple'); // Add ripple class
+                signupLinkElement.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showSignupForm();
+                });
+                userActionsNav.appendChild(signupLinkElement);
+            }
+            // Re-apply ripple listeners to newly created elements
+            addRippleEffectToNewElements();
+        }
+
+        function addRippleEffectToNewElements() {
+            // Re-select all elements that should have ripple effect after UI update
+            const newlyCreatedRippleElements = document.querySelectorAll('.auth-form-container button[type="submit"], .toggle-form a, #login-link, #signup-link, #logout-link, #scrollToTopBtn');
+            
+            newlyCreatedRippleElements.forEach(element => {
+                // Ensure event listener is added only once
+                if (!element._hasRippleListener) { // Check for a custom flag
+                    element.addEventListener('click', function(e) {
+                        if (this.classList.contains('active') && this.classList.contains('game-button')) {
+                            return; 
+                        }
+                        if (e.target.tagName === 'I' && (this.id === 'scrollToTopBtn' || this.classList.contains('close-btn'))) {
+                             return;
+                        }
+
+                        const ripple = document.createElement('span');
+                        ripple.classList.add('ripple-effect');
+
+                        const size = Math.max(this.offsetWidth, this.offsetHeight);
+                        const x = e.clientX - this.getBoundingClientRect().left - size / 2;
+                        const y = e.clientY - this.getBoundingClientRect().top - size / 2;
+
+                        ripple.style.width = ripple.style.height = `${size}px`;
+                        ripple.style.left = `${x}px`;
+                        ripple.style.top = `${y}px`;
+
+                        this.appendChild(ripple);
+
+                        ripple.addEventListener('animationend', () => {
+                            ripple.remove();
+                        });
+                    });
+                    element._hasRippleListener = true; // Set flag
+                }
+            });
+        }
+
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showContent('roblox-content'); 
+            const robloxCards = document.querySelectorAll('#roblox-content .product-card');
+            const numCols = window.innerWidth > 768 ? 4 : (window.innerWidth > 500 ? 2 : 1); 
+            robloxCards.forEach((card, index) => {
+                card.style.opacity = 0;
+                const row = Math.floor(index / numCols);
+                const col = index % numCols;
+                card.style.animationDelay = (0.6 + (row * 0.1) + (col * 0.05)) + 's'; 
+            });
+
+            updateUserUI(); // Update UI on page load based on current user status
+            addRippleEffectToNewElements(); // Ensure initial ripple effects are set
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+/* ใน CSS */
+.product-card {
+    /* คุณสมบัติเดิมของ product-card */
+    background-color: var(--card-background);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 25px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    /* ซ่อนไว้ตอนแรก และเตรียม Fade In */
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards; /* ระยะเวลาอนิเมชันของแต่ละการ์ด */
+}
+
+/* กำหนดดีเลย์ให้แต่ละการ์ดปรากฏไม่พร้อมกัน */
+.product-card-1 { animation-delay: 0.3s; }
+.product-card-2 { animation-delay: 0.6s; }
+.product-card-3 { animation-delay: 0.9s; }
+.product-card-4 { animation-delay: 1.2s; }
+
+/* ถ้ามี Product Card จำนวนมาก อาจใช้ JavaScript หรือวนลูปใน CSS Preprocessor เพื่อสร้าง .product-card-X ได้ */
