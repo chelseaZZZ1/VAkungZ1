@@ -387,13 +387,25 @@
             z-index: 100; /* Above all other content */
             justify-content: center;
             align-items: center;
+            /* Animation for opening */
             animation: fadeInOverlay 0.3s ease-out forwards;
+        }
+
+        /* Animation for closing the overlay */
+        .overlay.closing {
+            animation: fadeOutOverlay 0.3s ease-out forwards;
         }
 
         @keyframes fadeInOverlay {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        
+        @keyframes fadeOutOverlay {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
 
         .auth-form-container { /* ใช้ class เดียวกันสำหรับ Login และ Signup */
             background-color: var(--card-background);
@@ -403,15 +415,27 @@
             width: 90%;
             max-width: 500px;
             position: relative;
+            /* Animation for opening */
             transform: scale(0.9);
             animation: scaleIn 0.3s ease-out forwards;
             border: 2px solid var(--primary-color);
+        }
+
+        /* Animation for closing the form */
+        .auth-form-container.closing {
+            animation: scaleOut 0.3s ease-in forwards;
         }
 
         @keyframes scaleIn {
             from { transform: scale(0.9); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+        
+        @keyframes scaleOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(0.9); opacity: 0; }
+        }
+
 
         .auth-form-container h2 {
             font-size: 2rem;
@@ -977,19 +1001,40 @@
             authOverlay.style.display = 'flex'; 
             document.querySelector('.container').style.filter = 'blur(5px)'; 
             document.body.style.overflow = 'hidden'; 
+            // Remove closing classes if they were present from a previous close attempt
+            authOverlay.classList.remove('closing');
+            signupFormContainer.classList.remove('closing');
+            loginFormContainer.classList.remove('closing');
         }
 
         function closeAuthForm() {
-            authOverlay.style.display = 'none'; 
-            document.querySelector('.container').style.filter = 'none'; 
-            document.body.style.overflow = ''; 
-            // Clear messages and reset forms when closing
-            signupForm.reset();
-            loginForm.reset();
-            signupMessage.textContent = '';
-            signupMessage.classList.remove('show', 'success', 'error');
-            loginMessage.textContent = '';
-            loginMessage.classList.remove('show', 'success', 'error');
+            // Apply closing animations
+            authOverlay.classList.add('closing');
+            if (signupFormContainer.style.display === 'block') {
+                signupFormContainer.classList.add('closing');
+            } else if (loginFormContainer.style.display === 'block') {
+                loginFormContainer.classList.add('closing');
+            }
+
+            // After animation completes, truly hide and reset
+            setTimeout(() => {
+                authOverlay.style.display = 'none'; 
+                document.querySelector('.container').style.filter = 'none'; 
+                document.body.style.overflow = ''; 
+                // Clear messages and reset forms when closing
+                signupForm.reset();
+                loginForm.reset();
+                signupMessage.textContent = '';
+                signupMessage.classList.remove('show', 'success', 'error');
+                loginMessage.textContent = '';
+                loginMessage.classList.remove('show', 'success', 'error');
+
+                // Remove closing classes for next open
+                authOverlay.classList.remove('closing');
+                signupFormContainer.classList.remove('closing');
+                loginFormContainer.classList.remove('closing');
+
+            }, 300); // Match this timeout to the animation duration (0.3s)
         }
 
         function showSignupForm() {
@@ -1035,12 +1080,17 @@
                 // Automatically log in the new user
                 currentUser = { username: newUser.username, email: newUser.email };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateUserUI(); // Update UI immediately
+                
+                // Update UI first, then close form with animation
+                updateUserUI(); 
                 
                 setTimeout(() => {
                     closeAuthForm();
-                    showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับสู่ VAkung Shop!`, 'success'); // Show welcome on main page
-                }, 1500); // Delay before closing form and showing welcome
+                    // Show welcome message on main page after form is fully closed
+                    setTimeout(() => { // Small delay to ensure message appears after form disappears
+                        showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับสู่ VAkung Shop!`, 'success'); 
+                    }, 100); 
+                }, 1500); // Delay before closing form with animation
             }, 2000); // Simulate network latency
         });
 
@@ -1064,11 +1114,15 @@
                     
                     showMessage('login-message', 'เข้าสู่ระบบสำเร็จ!', 'success');
                     
+                    // Update UI first, then close form with animation
+                    updateUserUI(); 
                     setTimeout(() => {
                         closeAuthForm();
-                        updateUserUI(); // Update UI after successful login
-                        showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับกลับมา!`, 'success'); // Show welcome on main page
-                    }, 1000); // Delay before closing form and updating UI
+                        // Show welcome message on main page after form is fully closed
+                        setTimeout(() => { // Small delay to ensure message appears after form disappears
+                             showMessage('login-message', `สวัสดี, ${currentUser.username}! ยินดีต้อนรับกลับมา!`, 'success'); 
+                        }, 100);
+                    }, 1000); // Delay before closing form with animation
                 } else {
                     showMessage('login-message', 'ชื่อผู้ใช้/อีเมล หรือรหัสผ่านไม่ถูกต้อง!', 'error');
                 }
